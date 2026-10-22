@@ -570,3 +570,14 @@ html, body { overscroll-behavior-x: none; }
 .egy-comment-reply .egy-comment-text{font-size:14px}
 .egy-comment-reply .comment-vote{width:29px;height:29px;font-size:15px}
 .egy-comment-reply .comment-reaction-counts{font-size:10px}
+
+/* EgyBook Phase 6: compact post statistics shared by home and profile feeds */
+.post-stats{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:42px;padding:8px 13px;color:#a9bddc;font-size:12px;line-height:1.35;border-bottom:1px solid rgba(53,133,255,.18)}
+.post-stats>span:last-child{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.reaction-summary{display:flex;align-items:center;gap:7px;min-width:0;direction:rtl}
+.reaction-icons{display:inline-flex;align-items:center;flex-shrink:0;direction:ltr;padding-left:3px}
+.reaction-icons span{display:grid;place-items:center;width:23px;height:23px;margin-left:-5px;border:2px solid #07152b;border-radius:50%;background:#10294b;font-size:12px;line-height:1}
+.reaction-icons span:nth-child(2){z-index:1}
+.like-count{white-space:nowrap}
+.profile-posts-list .post-stats{margin-top:0}
+@media(max-width:390px){.post-stats{padding:8px 9px;font-size:10.5px;gap:5px}.reaction-summary{gap:4px}.reaction-icons span{width:21px;height:21px;font-size:11px}.post-stats>span:last-child{gap:3px}}
