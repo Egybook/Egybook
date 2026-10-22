@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030918"><meta name="color-scheme" content="dark"><meta name="description" content="EgyBook — مصر تجمعنا دائماً">
+<title>EgyBook | إيجي بوك</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="#home" aria-label="EgyBook">Egy<span>Book</span></a>
+  <div class="header-actions">
+    <button class="icon-button" type="button" data-action="search" aria-label="بحث"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button>
+    <button class="icon-button message" type="button" data-action="messages" aria-label="الرسائل"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="m3.5 6 8.5 7 8.5-7"/></svg><span class="badge">3</span></button>
+    <button class="icon-button" type="button" data-action="notifications" aria-label="الإشعارات"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></button>
+    <button class="avatar profile-avatar" type="button" data-action="profile" aria-label="حسابي">ح</button>
+  </div>
+</header>
+<main class="container" id="home">
+  <nav class="top-navigation" aria-label="التنقل الرئيسي">
+    <button class="top-nav-item active" data-page="home"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5M9.5 21v-7h5v7"/></svg></span>الرئيسية</button>
+    <button class="top-nav-item" data-page="friends"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M15 15a4.5 4.5 0 0 1 6 4v1"/></svg></span>الأصدقاء</button>
+    <button class="top-nav-item" data-page="explore"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span>استكشف</button>
+    <button class="top-nav-item" data-page="reels"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 9 5 3-5 3zM7 2v2M17 2v2"/></svg></span>الريلز</button>
+    <button class="top-nav-item" data-page="saved"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a2 2 0 0 1 2 2v16l-8-4-8 4V5a2 2 0 0 1 2-2z"/></svg></span>المحفوظات</button>
+  </nav>
+  <section class="create-post" aria-label="إنشاء منشور">
+    <div class="composer-row"><div class="avatar">ح</div><button class="composer-input" type="button" data-action="open-composer">شارك ما يدور في ذهنك ..</button></div>
+    <div class="composer-tools">
+      <button class="composer-tool photo" data-action="photo"><span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>صورة</button>
+      <button class="composer-tool video" data-action="video"><span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="4"/><path d="m10 8 6 4-6 4z"/></svg></span>فيديو</button>
+      <button class="composer-tool location" data-action="location"><span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-7.2 8-13a8 8 0 1 0-16 0c0 5.8 8 13 8 13z"/><circle cx="12" cy="9" r="2.5"/></svg></span>موقع</button>
+      <button class="composer-tool music" data-action="music"><span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13M9 8l12-2"/><ellipse cx="5.5" cy="18.5" rx="3.5" ry="2.5"/><ellipse cx="17.5" cy="16.5" rx="3.5" ry="2.5"/></svg></span>موسيقى</button>
+    </div>
+    <input id="photoInput" type="file" accept="image/*" hidden>
+    <input id="videoInput" type="file" accept="video/*" hidden>
+  </section>
+  <section class="section" id="storiesSection">
+    <div class="section-heading"><h2>القصص</h2><button class="section-link" data-action="all-stories">عرض الكل</button></div>
+    <div class="stories" id="storiesList">
+      <button class="story story-add" data-action="add-story"><span class="story-ring"><span class="avatar">＋</span></span><span class="story-name">إضافة قصتك</span></button>
+      <button class="story" data-action="story" data-name="سارة محمد"><span class="story-ring"><span class="avatar">س</span></span><span class="story-name">سارة محمد</span></button>
+      <button class="story" data-action="story" data-name="أحمد علي"><span class="story-ring"><span class="avatar">أ</span></span><span class="story-name">أحمد علي</span></button>
+      <button class="story" data-action="story" data-name="نور أحمد"><span class="story-ring"><span class="avatar">ن</span></span><span class="story-name">نور أحمد</span></button>
+      <button class="story" data-action="story" data-name="محمد حسن"><span class="story-ring"><span class="avatar">م</span></span><span class="story-name">محمد حسن</span></button>
+    </div>
+  </section>
+  <section class="section" id="feedSection">
+    <div class="section-heading feed-heading"><h2 id="feedTitle">أحدث المنشورات</h2><button class="sort-button" id="sortButton" data-action="sort">الأحدث ▾</button></div>
+    <div id="postsList">
+      <article class="post" data-post-id="sample-1">
+        <header class="post-header"><div class="avatar">أ</div><div class="post-author"><div class="author-name">Ahmed Mostafa <span class="verified">✓</span></div><div class="post-meta">منذ 3 ساعات · القاهرة، مصر · 🌐</div></div><button class="more-button" data-action="post-menu" aria-label="خيارات المنشور">⋯</button></header>
+        <p class="post-text">أحد أجمل الأماكن في مصر ❤️<br>النيل دائماً له سحر خاص.</p>
+        <div class="post-image-placeholder"><span>🌅</span><span>مصر .. تجمعنا دائماً</span></div>
+        <div class="post-stats"><div class="reaction-summary"><div class="reaction-icons"><span>👍</span><span>❤️</span><span>😍</span></div><span class="like-count">٢٫٤ ألف تفاعل</span></div><span><span class="comment-count">320</span> تعليق · <span class="share-count">85</span> مشاركة</span></div>
+        <div class="post-actions"><button class="post-action" data-action="like"><span class="action-icon">👍</span><span>إعجاب</span></button><button class="post-action" data-action="comment"><span class="action-icon">▱</span><span>تعليق</span></button><button class="post-action" data-action="share"><span class="action-icon">➦</span><span>مشاركة</span></button><button class="post-action" data-action="save"><span class="action-icon">🔖</span><span>حفظ</span></button></div>
+        <div class="comments-area" hidden></div>
+      </article>
+      <article class="post" data-post-id="sample-2"><header class="post-header"><div class="avatar">س</div><div class="post-author"><div class="author-name">سارة محمد <span class="verified">✓</span></div><div class="post-meta">منذ 5 ساعات · 🌐</div></div><button class="more-button" data-action="post-menu" aria-label="خيارات المنشور">⋯</button></header><p class="post-text">صباح الخير على كل الناس الجميلة 🌸 يومكم سعيد ومليان طاقة إيجابية!</p><div class="post-stats"><div class="reaction-summary"><div class="reaction-icons"><span>❤️</span><span>👍</span></div><span class="like-count">١٢٨ تفاعل</span></div><span><span class="comment-count">24</span> تعليق · <span class="share-count">7</span> مشاركة</span></div><div class="post-actions"><button class="post-action" data-action="like"><span class="action-icon">👍</span><span>إعجاب</span></button><button class="post-action" data-action="comment"><span class="action-icon">▱</span><span>تعليق</span></button><button class="post-action" data-action="share"><span class="action-icon">➦</span><span>مشاركة</span></button><button class="post-action" data-action="save"><span class="action-icon">🔖</span><span>حفظ</span></button></div><div class="comments-area" hidden></div></article>
+    </div>
+    <p id="emptyMessage" class="empty-message" hidden>لا توجد منشورات في هذا القسم حتى الآن.</p>
+  </section>
+</main>
+<section id="profilePage" class="profile-page" hidden aria-label="الملف الشخصي">
+  <div class="profile-cover"><div class="cover-glow"></div><div class="profile-top-actions"><button class="profile-round-button" data-action="profile-back" aria-label="رجوع">←</button><button class="profile-round-button" data-action="profile-cover" aria-label="تغيير صورة الغلاف">▧</button><button class="profile-round-button" data-action="profile-settings" aria-label="تعديل بيانات الحساب">⚙</button></div><div class="profile-avatar-wrap"><button class="profile-large-avatar" data-action="profile-photo" aria-label="تغيير الصورة الشخصية">ح</button><span class="online-dot"></span></div></div>
+  <div class="profile-content">
+    <div class="profile-name-row"><div><h1 id="profileName">حسابي</h1><p class="profile-handle">@egybook_user</p></div><span class="profile-badge">✦</span></div>
+    <p class="profile-bio">أهلاً بيكم في حسابي على EgyBook 💙<br>تواصل • شارك • اكتشف أكثر</p>
+    <div class="profile-details"><span>⌖ مصر</span><span>▦ عضو في EgyBook</span></div>
+    <div class="profile-stats"><button type="button" data-action="profile-section" data-section="posts"><strong id="profilePostsCount">0</strong><span>المنشورات</span></button><button type="button" data-action="profile-section" data-section="friends"><strong>0</strong><span>الأصدقاء</span></button><button type="button" data-action="profile-section" data-section="followers"><strong>2.4K</strong><span>المتابعون</span></button></div>
+    <div class="profile-buttons"><button class="profile-edit-button" data-action="edit-profile">✎ تعديل الملف الشخصي</button><button class="profile-secondary-button" data-action="profile-share">↗</button></div>
+    <div class="profile-shortcuts"><button data-action="profile-section" data-section="posts"><span>▧</span>المنشورات</button><button data-action="profile-section" data-section="photos"><span>▣</span>الصور</button><button data-action="profile-section" data-section="videos"><span>▶</span>الفيديوهات</button><button data-action="profile-section" data-section="saved"><span>🔖</span>المحفوظات</button></div>
+    <div class="profile-stories"><div class="section-heading"><h2>القصص المميزة</h2><button class="section-link" data-action="all-stories">عرض الكل</button></div><div class="stories"><div class="profile-highlight"><span>＋</span><small>إضافة قصة</small></div><div class="profile-highlight"><span>🌅</span><small>ذكرياتي</small></div><div class="profile-highlight"><span>💙</span><small>الأصدقاء</small></div><div class="profile-highlight"><span>📍</span><small>رحلات</small></div></div></div>
+    <div class="section-heading profile-posts-heading"><h2 id="profilePostsTitle">منشوراتي</h2><button class="section-link" data-action="profile-section" data-section="posts">عرض الكل</button></div>
+    <div id="profilePostsList" class="profile-posts-list"></div>
+    <input id="profilePhotoInput" type="file" accept="image/*" hidden><input id="profileCoverInput" type="file" accept="image/*" hidden>
+  </div>
+</section>
+<nav class="bottom-navigation" aria-label="التنقل السفلي">
+  <button class="bottom-item active" data-page="home"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5M9.5 21v-7h5v7"/></svg></span><span>الرئيسية</span></button>
+  <button class="bottom-item" data-page="explore"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span><span>اكتشف</span></button>
+  <button class="bottom-item create-button" data-action="open-composer" aria-label="إنشاء منشور"><span class="nav-icon" aria-hidden="true">+</span></button>
+  <button class="bottom-item" data-action="messages"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="m3.5 6 8.5 7 8.5-7"/></svg></span><span>الرسائل</span></button>
+  <button class="bottom-item" data-action="profile"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z"/></svg></span><span>حسابي</span></button>
+</nav>
+<div class="modal" id="createPostModal" role="dialog" aria-modal="true" aria-labelledby="composerTitle"><div class="modal-box"><div class="modal-header"><h2 id="composerTitle">إنشاء منشور</h2><button class="close-modal" data-action="close-modal" aria-label="إغلاق">×</button></div><form id="postForm"><textarea id="postContent" class="modal-textarea" placeholder="ماذا تريد أن تشارك اليوم؟" maxlength="3000" required></textarea><div id="mediaPreview" class="media-preview" hidden></div><label class="modal-hint" for="postVisibility">من يمكنه رؤية منشورك؟</label><select class="modal-input" id="postVisibility"><option>الجميع</option><option>الأصدقاء</option><option>أنا فقط</option></select><button class="primary-button" id="publishPost" type="submit">نشر الآن</button></form></div></div>
+<div class="modal" id="searchModal" role="dialog" aria-modal="true" aria-labelledby="searchTitle"><div class="modal-box"><div class="modal-header"><h2 id="searchTitle">البحث في EgyBook</h2><button class="close-modal" data-action="close-modal">×</button></div><input id="searchInput" class="modal-input" type="search" placeholder="ابحث في المنشورات..."><button class="primary-button" data-action="run-search">بحث</button><p class="modal-hint">البحث يعمل داخل المنشورات المعروضة حاليًا فقط.</p></div></div>
+<div class="modal" id="commentModal" role="dialog" aria-modal="true" aria-labelledby="commentTitle"><div class="modal-box"><div class="modal-header"><h2 id="commentTitle">إضافة تعليق</h2><button class="close-modal" data-action="close-modal">×</button></div><form id="commentForm"><textarea id="commentContent" class="modal-textarea" placeholder="اكتب تعليقك..." maxlength="1000" required></textarea><button class="primary-button" type="submit">إرسال التعليق</button></form></div></div>
+<div class="modal" id="editProfileModal" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle"><div class="modal-box edit-profile-box"><div class="modal-header"><h2 id="editProfileTitle">تعديل الملف الشخصي</h2><button class="close-modal" data-action="close-modal" aria-label="إغلاق">×</button></div><form id="editProfileForm"><label class="modal-hint" for="editName">الاسم</label><input id="editName" class="modal-input" maxlength="60" required><label class="modal-hint" for="editUsername">اسم المستخدم (بدون @)</label><input id="editUsername" class="modal-input" maxlength="30" pattern="[A-Za-z0-9._]+" required><label class="modal-hint" for="editBio">النبذة الشخصية</label><textarea id="editBio" class="modal-textarea" maxlength="150" rows="3"></textarea><label class="modal-hint" for="editLocation">الموقع</label><input id="editLocation" class="modal-input" maxlength="100"><label class="modal-hint" for="editBirthdate">تاريخ الميلاد</label><input id="editBirthdate" class="modal-input" type="date"><label class="modal-hint" for="editGender">النوع</label><select id="editGender" class="modal-input"><option value="">لم أحدد</option><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select><label class="modal-hint" for="editWebsite">الموقع الإلكتروني (اختياري)</label><input id="editWebsite" class="modal-input" type="url" placeholder="https://"><label class="modal-hint" for="editPhone">رقم الهاتف</label><input id="editPhone" class="modal-input" type="tel" maxlength="25"><label class="modal-hint" for="editPrivacy">خصوصية الحساب</label><select id="editPrivacy" class="modal-input"><option value="عام">عام</option><option value="خاص">خاص</option></select><button class="primary-button" type="submit">حفظ التغييرات</button></form></div></div>
+<div class="modal" id="reactionModal" role="dialog" aria-modal="true" aria-label="اختر التفاعل"><div class="modal-box"><div class="modal-header"><h2>اختر تفاعلك</h2><button class="close-modal" data-action="close-modal">×</button></div><div class="reaction-picker"><button data-reaction="👍" data-label="إعجاب">👍<small>لايك</small></button><button data-reaction="❤️" data-label="حب">❤️<small>حب</small></button><button data-reaction="😮" data-label="واو">😮<small>واو</small></button><button data-reaction="😂" data-label="أضحكني">😂<small>أضحكني</small></button><button data-reaction="😢" data-label="حزين">😢<small>حزين</small></button><button data-reaction="😡" data-label="اغضبني">😡<small>اغضبني</small></button></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="script.js" defer></script>
+</body></html>
