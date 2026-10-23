@@ -295,7 +295,7 @@
     const data={id:row.id,text:row.text||'',media:row.media_url||null,mediaType:row.media_type||null,visibility:row.visibility||'الجميع',createdAt};
     const article=createPostElement(data);article.dataset.createdAt=String(createdAt);article.dataset.visibility=data.visibility;
     article.dataset.media=data.media||'';article.dataset.mediaType=data.mediaType||'';
-    if(currentUser&&row.user_id===currentUser.id)article.dataset.userPost='true';
+    if(currentUser&&row.user_id===currentUser.id){article.dataset.userPost='true';applyAvatar($('.post-header .avatar',article));}
     postsList.append(article);restorePostState(article);syncPostStats(article);
   }
   async function restorePosts() {
