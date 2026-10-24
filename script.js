@@ -136,12 +136,14 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
   function restorePostState(post){ const state=postState[post.dataset.postId]; if(!state)return; if(state.saved){const b=$('[data-action="save"]',post);if(b){b.classList.add('saved');const label=$('span:last-child',b);if(label)label.textContent='تم الحفظ';}} if(state.reaction){const b=$('[data-action="like"]',post);if(b){b.classList.add('reacted');b.dataset.currentReaction=state.reaction;b.dataset.currentReactionLabel=state.reactionLabel||'تفاعل';const icon=$('.action-icon',b);if(icon)icon.textContent=state.reaction;const label=$$('span',b)[1];if(label)label.textContent=state.reactionLabel||'تفاعل';const icons=$('.reaction-icons',post);if(icons)icons.innerHTML=`<span>${state.reaction}</span>`;}} if(state.pinned)post.classList.add('post-pinned'); if(state.archived)post.hidden=true; if(state.trashed)post.hidden=true; }
   function applyAvatar(element){ if(!element)return; if(profileData.avatar){element.textContent='';element.style.backgroundImage=`url(\"${profileData.avatar}\")`;element.style.backgroundSize='cover';element.style.backgroundPosition='center';}else{element.style.backgroundImage='';element.textContent=(profileData.name||'ح').trim().charAt(0)||'ح';} }
   function updateRealProfileStats(){
-    const ownPosts=$$('.post[data-user-post="true"]',postsList);
-    const postsCount=$('#profilePostsCount'); if(postsCount)postsCount.textContent=String(ownPosts.length);
-    // No friends/followers backend is connected yet, so never display fabricated counts.
+    const viewedId = publicProfileId || (publicProfileIsOwn ? currentUser?.id : null);
+    const ownPosts = viewedId
+      ? $$('.post[data-cloud-post="true"], .post[data-user-post="true"]',postsList).filter(post=>post.dataset.authorId===viewedId)
+      : [];
+    const postsCount=$('#profilePostsCount'); if(postsCount && (!viewedId || !profileStatsLoading))postsCount.textContent=String(ownPosts.length);
     const stats=$$('.profile-stats button');
-    if(stats[1]){const value=$('strong',stats[1]);if(value)value.textContent='0';}
-    const followers=$('#profileFollowersCount');if(followers)followers.textContent=String(followersCount||0);
+    if(stats[1]){const value=$('strong',stats[1]);if(value)value.textContent=String(profileFriendsCount||0);}
+    const followers=$('#profileFollowersCount');if(followers)followers.textContent=String(profileFollowersCount||0);
   }
   function applyProfile(){
     $('#profileNameText').textContent=profileData.name||'حسابي'; $('.profile-handle').textContent='@'+(profileData.username||'egybook_user'); $('.profile-bio').textContent=profileData.bio||'';
@@ -546,6 +548,7 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
     closeModal($('#commentsModal'));document.body.classList.remove('post-route-open');const viewer=$('#postViewer');if(viewer)viewer.hidden=true;
     $('#memezPage').hidden=true;
     currentPage='profile'; publicProfileUsername=normalized;
+    profileStatsLoading=true;
     publicProfileId = normalized===cleanUsername(profileData.username) ? (currentUser?.id||null) : null;
     publicProfileIsOwn = normalized===cleanUsername(profileData.username);
     // Reset previous user's visible data while the requested profile is loading.
@@ -566,34 +569,107 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
     if(scroll)window.scrollTo({top:0,behavior:'auto'});
     updateProfileActionVisibility();
     if(normalized!==cleanUsername(profileData.username)) loadPublicProfileByUsername(normalized);
+    else { publicProfileId=currentUser?.id||null; publicProfileIsOwn=true; loadProfileSocialCounts().finally(()=>{profileStatsLoading=false;}); }
   }
   function updateProfileActionVisibility(){
     const isOwn=!!publicProfileIsOwn;
     $$('.profile-edit-button,[data-action="edit-profile"]').forEach(button=>{
-      // The sidebar edit button is only meaningful while viewing the signed-in user's own profile.
       if(button.classList.contains('profile-edit-button')) button.hidden=!isOwn;
       else if(button.classList.contains('sidebar-edit')) button.hidden=!isOwn;
     });
     const buttons=$('.profile-buttons');
     if(!buttons)return;
     let relationship=buttons.querySelector('[data-action="profile-relationship"]');
-    if(isOwn){if(relationship)relationship.remove();return;}
-    if(!relationship){relationship=document.createElement('button');relationship.type='button';relationship.className='profile-edit-button';relationship.dataset.action='profile-relationship';relationship.textContent='＋ إضافة صديق';buttons.insertBefore(relationship,buttons.firstChild);}
+    let follow=buttons.querySelector('[data-action="profile-follow"]');
+    if(isOwn){
+      relationship?.remove(); follow?.remove(); return;
+    }
+    if(!relationship){relationship=document.createElement('button');relationship.type='button';relationship.className='profile-edit-button';relationship.dataset.action='profile-relationship';buttons.insertBefore(relationship,buttons.firstChild);}
+    if(!follow){follow=document.createElement('button');follow.type='button';follow.className='profile-secondary-button';follow.dataset.action='profile-follow';buttons.insertBefore(follow,relationship.nextSibling);}
+    relationship.textContent='جارٍ التحقق من الصداقة…'; relationship.disabled=true;
+    follow.textContent='جارٍ التحقق من المتابعة…'; follow.disabled=true;
+    if(publicProfileId && currentUser && publicProfileId===currentUser.id){publicProfileIsOwn=true;relationship.remove();follow.remove();}
+  }
+  async function loadProfileRelationship(){
+    const targetId=publicProfileId, viewerId=currentUser?.id;
+    if(!targetId || !viewerId || targetId===viewerId){updateProfileActionVisibility();return;}
+    const buttons=$('.profile-buttons'); if(!buttons)return;
+    const friendButton=buttons.querySelector('[data-action="profile-relationship"]');
+    const followButton=buttons.querySelector('[data-action="profile-follow"]');
+    try{
+      const [outgoing,incoming,followRow,friendRows]=await Promise.all([
+        supabase.from('friend_requests').select('id,status,sender_id,receiver_id').eq('sender_id',viewerId).eq('receiver_id',targetId).maybeSingle(),
+        supabase.from('friend_requests').select('id,status,sender_id,receiver_id').eq('sender_id',targetId).eq('receiver_id',viewerId).maybeSingle(),
+        supabase.from('user_follows').select('id').eq('follower_id',viewerId).eq('following_id',targetId).maybeSingle(),
+        supabase.from('friend_requests').select('id,status,sender_id,receiver_id').or(`and(sender_id.eq.${viewerId},receiver_id.eq.${targetId}),and(sender_id.eq.${targetId},receiver_id.eq.${viewerId})`).eq('status','accepted')
+      ]);
+      if(publicProfileId!==targetId || currentUser?.id!==viewerId)return;
+      const outgoingRow=outgoing.data, incomingRow=incoming.data;
+      if(friendButton){
+        if(friendRows.data?.length){friendButton.textContent='✓ صديق';friendButton.disabled=true;friendButton.dataset.friendStatus='accepted';}
+        else if(incomingRow?.status==='pending'){friendButton.textContent='قبول طلب الصداقة';friendButton.disabled=false;friendButton.dataset.friendStatus='incoming';}
+        else if(outgoingRow?.status==='pending'){friendButton.textContent='إلغاء طلب الصداقة';friendButton.disabled=false;friendButton.dataset.friendStatus='outgoing';}
+        else {friendButton.textContent='＋ إضافة صديق';friendButton.disabled=false;friendButton.dataset.friendStatus='none';}
+      }
+      if(followButton){followButton.textContent=followRow.data?'✓ متابَع':'＋ متابعة';followButton.disabled=false;followButton.dataset.following=followRow.data?'true':'false';}
+    }catch(error){
+      console.warn('Relationship state unavailable',error);
+      if(friendButton){friendButton.textContent='＋ إضافة صديق';friendButton.disabled=false;friendButton.dataset.friendStatus='none';}
+      if(followButton){followButton.textContent='＋ متابعة';followButton.disabled=false;followButton.dataset.following='false';}
+    }
   }
   async function sendProfileFriendRequest(){
     if(!currentUser||!supabase){showToast('سجّل الدخول أولًا لإضافة صديق.');return;}
     const targetId=publicProfileId;
     if(!targetId||targetId===currentUser.id){showToast('تعذر تحديد حساب المستخدم المطلوب.');return;}
+    if(profileRelationshipBusy)return; profileRelationshipBusy=true;
+    const button=$('[data-action="profile-relationship"]');
     try{
-      const {error}=await supabase.from('friend_requests').upsert({sender_id:currentUser.id,receiver_id:targetId,status:'pending',updated_at:new Date().toISOString()},{onConflict:'sender_id,receiver_id'});
-      if(error)throw error;
-      const button=$('[data-action="profile-relationship"]');
-      if(button){button.textContent='✓ تم إرسال الطلب';button.disabled=true;}
-      showToast('تم إرسال طلب الصداقة.');
-    }catch(error){
-      console.error('Friend request failed:',error);
-      showToast('تعذر إرسال طلب الصداقة. تأكد من تشغيل ملف SQL الخاص بالصداقات.');
-    }
+      const status=button?.dataset.friendStatus||'none';
+      if(status==='incoming'){
+        const {error}=await supabase.from('friend_requests').update({status:'accepted',updated_at:new Date().toISOString()}).eq('sender_id',targetId).eq('receiver_id',currentUser.id).eq('status','pending');
+        if(error)throw error;showToast('تم قبول طلب الصداقة.');
+      }else if(status==='outgoing'){
+        const {error}=await supabase.from('friend_requests').update({status:'cancelled',updated_at:new Date().toISOString()}).eq('sender_id',currentUser.id).eq('receiver_id',targetId).eq('status','pending');
+        if(error)throw error;showToast('تم إلغاء طلب الصداقة.');
+      }else if(status==='accepted'){showToast('هذا المستخدم صديقك بالفعل.');}
+      else{
+        const {error}=await supabase.from('friend_requests').upsert({sender_id:currentUser.id,receiver_id:targetId,status:'pending',updated_at:new Date().toISOString()},{onConflict:'sender_id,receiver_id'});
+        if(error)throw error;showToast('تم إرسال طلب الصداقة.');
+      }
+      await loadProfileRelationship(); await loadProfileSocialCounts();
+    }catch(error){console.error('Friend request failed:',error);showToast('تعذر تحديث الصداقة. راجع سياسات friend_requests في Supabase.');}
+    finally{profileRelationshipBusy=false;}
+  }
+  async function toggleProfileFollow(){
+    if(!currentUser||!supabase){showToast('سجّل الدخول لمتابعة المستخدمين.');return;}
+    const targetId=publicProfileId;if(!targetId||targetId===currentUser.id)return;
+    const button=$('[data-action="profile-follow"]');if(!button)return;
+    button.disabled=true;
+    try{
+      if(button.dataset.following==='true'){
+        const {error}=await supabase.from('user_follows').delete().eq('follower_id',currentUser.id).eq('following_id',targetId);if(error)throw error;
+        showToast('تم إلغاء المتابعة.');
+      }else{
+        const {error}=await supabase.from('user_follows').insert({follower_id:currentUser.id,following_id:targetId});if(error)throw error;
+        showToast('بدأت متابعة هذا المستخدم.');
+      }
+      await loadProfileRelationship();await loadProfileSocialCounts();
+    }catch(error){console.error('Follow failed:',error);showToast('تعذرت المتابعة. تأكد من تنفيذ ترحيل العلاقات في Supabase.');button.disabled=false;}
+  }
+  async function loadProfileSocialCounts(){
+    const targetId=publicProfileId || (publicProfileIsOwn?currentUser?.id:null); if(!targetId||!supabase)return;
+    const [friends,followers,posts]=await Promise.all([
+      supabase.from('friend_requests').select('id', {count:'exact',head:true}).eq('status','accepted').or(`sender_id.eq.${targetId},receiver_id.eq.${targetId}`),
+      supabase.from('user_follows').select('id',{count:'exact',head:true}).eq('following_id',targetId),
+      supabase.from('posts').select('id',{count:'exact',head:true}).eq('user_id',targetId)
+    ]);
+    if(publicProfileId!==targetId && currentUser?.id!==targetId)return;
+    profileFriendsCount=friends.error?0:(friends.count||0);
+    profileFollowersCount=followers.error?0:(followers.count||0);
+    const postCount=$('#profilePostsCount');if(postCount && !posts.error)postCount.textContent=String(posts.count||0);
+    const stats=$$('.profile-stats button');if(stats[1]){const v=$('strong',stats[1]);if(v)v.textContent=String(profileFriendsCount);}
+    const followerEl=$('#profileFollowersCount');if(followerEl)followerEl.textContent=String(profileFollowersCount);
   }
   function showProfile(){ routeToProfile(profileData.username,{push:true}); }
   function ensurePostViewer(){
@@ -709,12 +785,16 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
     if(!supabase)return;
     const requested=cleanUsername(username);
     try{
-      const {data,error}=await supabase.from('profiles').select('*').eq('username',requested).maybeSingle();
+      const {data,error}=await supabase.from('profiles').select('*').ilike('username',requested).maybeSingle();
       if(publicProfileUsername!==requested)return;
       if(error || !data){
         $('#profileNameText').textContent='الحساب غير متاح';
         $('.profile-handle').textContent='@'+requested;
-        publicProfileId=null;publicProfileIsOwn=false;updateProfileActionVisibility();renderProfilePosts();
+        $('.profile-bio').textContent='';
+        const avatar=$('.profile-large-avatar');if(avatar){avatar.style.backgroundImage='';avatar.textContent=requested.charAt(0).toUpperCase()||'؟';}
+        const cover=$('.profile-cover');if(cover){cover.style.backgroundImage='';cover.classList.remove('has-image');}
+        publicProfileId=null;publicProfileIsOwn=false;profileStatsLoading=false;updateProfileActionVisibility();renderProfilePosts();
+        showToast('تعذر العثور على هذا الحساب. تحقق من اسم المستخدم أو إعدادات profiles.');
         return;
       }
       const name=data.full_name || data.name || username;
@@ -737,14 +817,14 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
       if(publicProfile.avatar){const avatar=$('.profile-large-avatar');if(avatar){avatar.textContent='';avatar.style.backgroundImage='url("'+publicProfile.avatar.replace(/"/g,'%22')+'")';avatar.style.backgroundSize='cover';avatar.style.backgroundPosition='center';}}
       if(publicProfile.cover){const cover=$('.profile-cover');if(cover){cover.classList.add('has-image');cover.style.backgroundImage='url("'+publicProfile.cover.replace(/"/g,'%22')+'")';}}
       renderProfilePosts();
-      }catch(error){console.warn('Public profile lookup failed',error);}
+      }catch(error){profileStatsLoading=false;console.warn('Public profile lookup failed',error);}
   }
   function renderProfilePosts() {
     const target = $('#profilePostsList'); target.replaceChildren();
     const viewedId = publicProfileId || (publicProfileIsOwn ? currentUser?.id : null) || null;
     const ownPosts = $$('.post[data-cloud-post="true"], .post[data-user-post="true"]', postsList)
       .filter(post => viewedId && post.dataset.authorId === viewedId);
-    $('#profilePostsCount').textContent = String(ownPosts.length);updateRealProfileStats();
+    if(!profileStatsLoading && !publicProfileId && !publicProfileIsOwn) $('#profilePostsCount').textContent = String(ownPosts.length);
     if (!ownPosts.length) { const empty = document.createElement('div'); empty.className='profile-empty'; empty.textContent='لسه مفيش منشورات هنا — شارك أول منشور ليك من زر +.'; target.append(empty); return; }
     ownPosts.sort((a,b)=>Number(!!postState[b.dataset.postId]?.pinned)-Number(!!postState[a.dataset.postId]?.pinned)); ownPosts.forEach(post => { const clone=post.cloneNode(true); clone.querySelectorAll('.comments-area').forEach(a=>a.remove()); if(postState[post.dataset.postId]?.pinned){const badge=document.createElement('span');badge.className='pinned-post-badge';badge.textContent='📌 منشور مثبت';const author=clone.querySelector('.post-author');if(author)author.append(badge);} target.append(clone); });
   }
@@ -1185,7 +1265,7 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
     }
     const button = event.target.closest('button'); if (!button) return;
     const action = button.dataset.action;
-    if(action==='profile-relationship'){sendProfileFriendRequest();return;}
+    if(action==='profile-relationship'){sendProfileFriendRequest();return;} if(action==='profile-follow'){toggleProfileFollow();return;}
     if(action==='open-auth'){closeSidebar();setAuthMode('login');refreshAuthUI();openModal($('#supabaseAuthModal'));return;} if(action==='reels-close'){history.pushState({page:'home'},'',SITE_BASE_PATH);routeFromLocation();return;}
     if(action==='reels-upload'){ $('#reelUploadInput')?.click();return; }
     if(action==='memez-open'){history.pushState({page:'memez'},'','/Egybook/memez');routeFromLocation();return;}
