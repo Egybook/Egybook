@@ -247,12 +247,50 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
     avatar.setAttribute('aria-label','فتح ملفي الشخصي');
     avatar.title='فتح ملفي الشخصي';
   }
+  function profileFieldVisible(profile,key,isOwn){
+    if(isOwn)return true;
+    const privacy=(profile?.[key+'_privacy']||'public').toLowerCase();
+    // Friends-only values remain hidden unless friendship is positively established.
+    if(privacy==='private'||privacy==='أنا فقط')return false;
+    if(privacy==='friends'||privacy==='الأصدقاء')return false;
+    return true;
+  }
+  function renderProfileAbout(profile,isOwn){
+    const details=$('#profileDetails'),card=$('#profileAboutCard'),content=$('#profileAboutContent');
+    if(!details||!card||!content)return;
+    const fields=[
+      ['location','المدينة',profile?.location,'<path d="M12 21s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2"/>'],
+      ['birthdate','تاريخ الميلاد',profile?.birthdate,'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>'],
+      ['relationship','الحالة الاجتماعية',({single:'أعزب',married:'متزوج',engaged:'مخطوب',relationship:'مرتبط'})[profile?.relationship]||profile?.relationship,'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>'],
+      ['work','العمل',profile?.work,'<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4h8v3M3 12h18"/>'],
+      ['education','التعليم',profile?.education,'<path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c4 3 8 3 12 0v-5M22 9v6"/>']
+    ];
+    details.innerHTML='';
+    const visible=[];
+    fields.forEach(([key,label,value,path])=>{
+      if(!value||!profileFieldVisible(profile,key,isOwn))return;
+      let shown=String(value);
+      if(key==='birthdate'){
+        const mode=profile.birthdate_display||'full';
+        if(mode==='hidden'&&!isOwn)return;
+        if(mode==='day_month'){const d=new Date(`${shown}T12:00:00`);if(!Number.isNaN(d.getTime()))shown=d.toLocaleDateString('ar-EG',{day:'numeric',month:'long'});}
+        else {const d=new Date(`${shown}T12:00:00`);if(!Number.isNaN(d.getTime()))shown=d.toLocaleDateString('ar-EG',{day:'numeric',month:'long',year:'numeric'});}
+      }
+      visible.push({key,label,shown,path});
+    });
+    const location=visible.find(x=>x.key==='location');
+    if(location){const span=document.createElement('span');span.className='profile-detail-item';span.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${location.path}</svg><span></span>`;span.lastElementChild.textContent=location.shown;details.append(span);}
+    const more=visible.filter(x=>x.key!=='location');
+    card.hidden=!more.length;
+    content.innerHTML='';
+    more.forEach(item=>{const row=document.createElement('div');row.className='profile-about-row';row.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${item.path}</svg><span class="profile-about-label"></span><span class="profile-about-value"></span>`;row.querySelector('.profile-about-label').textContent=item.label;row.querySelector('.profile-about-value').textContent=item.shown;content.append(row);});
+  }
   function applyProfile(){
     $('#profileNameText').textContent=profileData.name||'حسابي';addBadgeToUserName($('#profileNameText'),currentUser?.id||''); $('.profile-handle').textContent='@'+(profileData.username||'egybook_user'); $('.profile-bio').textContent=profileData.bio||'';
     const sideName=$('#sidebarAccountName'),sideHandle=$('#sidebarAccountHandle');
     if(sideName)sideName.textContent=profileData.name||currentUser?.user_metadata?.full_name||'حسابي';
     if(sideHandle)sideHandle.textContent='@'+(profileData.username||currentUser?.user_metadata?.username||'egybook_user');
-    const details=$$('.profile-details span'); if(details[0])details[0].textContent='⌖ '+(profileData.location||'لم يحدد الموقع');
+    renderProfileAbout(profileData,true);
     const cover=$('.profile-cover');
     if(cover){
       const coverUrl=String(profileData.cover||'').trim();
@@ -326,7 +364,13 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
       showToast(key==='avatar'?'تم تحديث الصورة الشخصية بنجاح.':'تم تحديث صورة الغلاف بنجاح.');
     }catch(err){showToast('تعذر تحديث الصورة: '+(err.message||'حاول مرة أخرى.'));}
   }
-  function openEditProfile(){ $('#editName').value=profileData.name||'';$('#editUsername').value=profileData.username||'';$('#editBio').value=profileData.bio||'';$('#editLocation').value=profileData.location||'';$('#editBirthdate').value=profileData.birthdate||'';$('#editGender').value=profileData.gender||'';$('#editWebsite').value=profileData.website||'';$('#editPhone').value=profileData.phone||'';$('#editPrivacy').value=profileData.privacy||'عام';openModal($('#editProfileModal')); }
+  function openEditProfile(){ $('#editName').value=profileData.name||'';$('#editUsername').value=profileData.username||'';$('#editBio').value=profileData.bio||'';$('#editLocation').value=profileData.location||'';$('#editBirthdate').value=profileData.birthdate||'';$('#editGender').value=profileData.gender||'';$('#editWebsite').value=profileData.website||'';$('#editPhone').value=profileData.phone||'';$('#editPrivacy').value=profileData.privacy||'عام';
+    ['LocationPrivacy','BirthdatePrivacy','RelationshipPrivacy','WorkPrivacy','EducationPrivacy'].forEach(k=>{const el=$('#edit'+k);if(el)el.value=profileData[k.charAt(0).toLowerCase()+k.slice(1)]||'public';});
+    $('#editBirthdateDisplay').value=profileData.birthdate_display||'full';
+    $('#editRelationship').value=profileData.relationship||'';
+    $('#editWork').value=profileData.work||'';
+    $('#editEducation').value=profileData.education||'';
+    openModal($('#editProfileModal')); }
   const postReactionSvg = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.2 10.2 11 4.5c.5-.8 1.7-.5 1.8.5l.2 4h4.1a2 2 0 0 1 1.9 2.6l-1.8 6.1a2.4 2.4 0 0 1-2.3 1.7H7.2z"/><path d="M4 10h3.2v9H4z"/></svg>';
   const pendingPostReactions = new Map();
   const reactionLabels = {'👍':'إعجاب','❤️':'حب','😍':'أعجبني جدًا','😂':'أضحكني','😮':'واو','😢':'حزين','😡':'غاضب'};
@@ -2065,10 +2109,22 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
         username:cleanUsername(data.username || username),
         bio:data.bio || '',
         location:data.location || '',
+        birthdate:data.birthdate || '',
+        birthdate_display:data.birthdate_display || 'hidden',
+        location_privacy:data.location_privacy || 'public',
+        birthdate_privacy:data.birthdate_privacy || 'public',
+        relationship:data.relationship || '',
+        relationship_privacy:data.relationship_privacy || 'public',
+        work:data.work || '',
+        work_privacy:data.work_privacy || 'public',
+        education:data.education || '',
+        education_privacy:data.education_privacy || 'public',
         avatar:data.avatar_url || data.avatar || '',
         cover:data.cover_url || data.cover || ''
       };
       publicProfileId=data.id;
+      const profileCover=$('.profile-cover');if(profileCover){profileCover.dataset.appliedCoverUrl='';profileCover.dataset.pendingCoverUrl='';profileCover.style.backgroundImage='';profileCover.classList.remove('has-image');}
+      const profileAvatarNode=$('.profile-large-avatar');if(profileAvatarNode){profileAvatarNode.style.backgroundImage='';profileAvatarNode.textContent=(name||username||'ح').trim().charAt(0);}
       refreshViewedProfileVerification();
       loadProfileFriends(data.id);
       publicProfileIsOwn=!!currentUser && data.id===currentUser.id;
@@ -2077,7 +2133,7 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
       $('#profileNameText').textContent=publicProfile.name;addBadgeToUserName($('#profileNameText'),data.id);
       $('.profile-handle').textContent='@'+publicProfile.username;
       $('.profile-bio').textContent=publicProfile.bio;
-      const details=$$('.profile-details span');if(details[0])details[0].textContent='⌖ '+(publicProfile.location||'لم يحدد الموقع');
+      renderProfileAbout({...data,...publicProfile},publicProfileIsOwn);
       const avatar=$('.profile-large-avatar');if(avatar){avatar.style.backgroundImage='';avatar.textContent=(name||'ح').trim().charAt(0)||'ح';if(publicProfile.avatar){avatar.textContent='';avatar.style.backgroundImage='url("'+publicProfile.avatar.replace(/"/g,'%22')+'")';avatar.style.backgroundSize='cover';avatar.style.backgroundPosition='center';}}
       const cover=$('.profile-cover');if(cover){
         const coverUrl=String(publicProfile.cover||'').trim();
@@ -3646,6 +3702,7 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
     else if (action === 'profile-cover-camera') {if(!currentUser||!publicProfileIsOwn){showToast('يمكن لصاحب الحساب فقط تغيير صورة الغلاف.');return;}$('#profileCoverInput').click();}
     else if (action === 'profile-cover-preview') {if(event.target.closest('.profile-camera-button,.profile-more-button'))return;openProfileImagePreview('cover');}
     else if (action === 'profile-settings') openEditProfile();
+    else if(action==='profile-about-toggle'){const content=$('#profileAboutContent'),button=event.target.closest('[data-action="profile-about-toggle"]');if(content&&button){const opening=content.hidden;content.hidden=!opening;button.setAttribute('aria-expanded',String(opening));}}
     else if (action === 'profile-menu-toggle') { $('#profileMenuDrawer')?.classList.contains('is-open')?closeProfileMenu():openProfileMenu(); }
     else if (action === 'profile-menu-close') closeProfileMenu();
     else if (action === 'profile-menu-verified') { closeProfileMenu(); showToast('حالة التحقق من الملف الشخصي تُعرض حسب بيانات الحساب.'); }
@@ -3712,7 +3769,11 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
   $('#editProfileForm').addEventListener('submit',async event=>{
     event.preventDefault();const username=$('#editUsername').value.trim().replace(/^@/,'');
     if(!/^[A-Za-z0-9._]{3,30}$/.test(username)){showToast('اسم المستخدم يجب أن يكون 3–30 حرفًا إنجليزيًا أو رقمًا أو نقطة أو _.');return;}
-    profileData={...profileData,name:$('#editName').value.trim(),username,bio:$('#editBio').value.trim(),location:$('#editLocation').value.trim(),birthdate:$('#editBirthdate').value,gender:$('#editGender').value,website:$('#editWebsite').value.trim(),phone:$('#editPhone').value.trim(),privacy:$('#editPrivacy').value};
+    profileData={...profileData,name:$('#editName').value.trim(),username,bio:$('#editBio').value.trim(),location:$('#editLocation').value.trim(),birthdate:$('#editBirthdate').value,gender:$('#editGender').value,website:$('#editWebsite').value.trim(),phone:$('#editPhone').value.trim(),privacy:$('#editPrivacy').value,
+      locationPrivacy:$('#editLocationPrivacy').value,birthdatePrivacy:$('#editBirthdatePrivacy').value,birthdate_display:$('#editBirthdateDisplay').value,
+      relationship:$('#editRelationship').value,relationshipPrivacy:$('#editRelationshipPrivacy').value,
+      work:$('#editWork').value.trim(),workPrivacy:$('#editWorkPrivacy').value,
+      education:$('#editEducation').value.trim(),educationPrivacy:$('#editEducationPrivacy').value};
     saveProfile();applyProfile();if(currentPage==='profile'){history.replaceState({page:'profile',username:cleanUsername(profileData.username)},'',profilePath(profileData.username));syncHeaderProfileUsername();}closeModal($('#editProfileModal'));
     if(supabase&&currentUser){
       const {error:publicError}=await supabase.from('profiles').upsert(cloudProfilePayload(),{onConflict:'id'});
@@ -4171,13 +4232,13 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
   let authMode = 'login';
   function cloudProfilePayload(){
     const safeUsername=(profileData.username||'egybook_user').replace(/[^A-Za-z0-9._]/g,'_').slice(0,30);
-    return {id:currentUser.id,username:safeUsername,full_name:profileData.name||'عضو EgyBook',avatar_url:profileData.avatar||null,cover_url:profileData.cover||null,bio:profileData.bio||'',location:profileData.location||'',updated_at:new Date().toISOString()};
+    return {id:currentUser.id,username:safeUsername,full_name:profileData.name||'عضو EgyBook',avatar_url:profileData.avatar||null,cover_url:profileData.cover||null,bio:profileData.bio||'',location:profileData.location||'',birthdate:profileData.birthdate||null,birthdate_display:profileData.birthdate_display||'full',location_privacy:profileData.locationPrivacy||'public',birthdate_privacy:profileData.birthdatePrivacy||'public',relationship:profileData.relationship||'',relationship_privacy:profileData.relationshipPrivacy||'public',work:profileData.work||'',work_privacy:profileData.workPrivacy||'public',education:profileData.education||'',education_privacy:profileData.educationPrivacy||'public',updated_at:new Date().toISOString()};
   }
   async function restoreCloudProfile(){
     if(!supabase||!currentUser)return;
     const authUser=currentUser;
     const {data,error}=await supabase.from('profiles')
-      .select('id,username,full_name,avatar_url,cover_url,bio,location')
+      .select('*')
       .eq('id',authUser.id).maybeSingle();
     if(error){console.warn('Cloud profile load:',error.message);showToast('تعذر تحميل بيانات الحساب من السحابة.');return;}
     let cloud=data;
@@ -4186,7 +4247,7 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
       const emailName=(authUser.email||'').split('@')[0].replace(/[^A-Za-z0-9._]/g,'_').slice(0,20);
       const username=cleanUsername(meta.username||`${emailName||'egybook_user'}_${authUser.id.slice(0,5)}`);
       const initial={id:authUser.id,username,full_name:meta.full_name||meta.name||'عضو EgyBook',avatar_url:null,cover_url:null,bio:'',location:'',updated_at:new Date().toISOString()};
-      const {data:created,error:createError}=await supabase.from('profiles').upsert(initial,{onConflict:'id'}).select('id,username,full_name,avatar_url,cover_url,bio,location').single();
+      const {data:created,error:createError}=await supabase.from('profiles').upsert(initial,{onConflict:'id'}).select('*').single();
       if(createError){console.error('Profile bootstrap failed:',createError.message);showToast('تعذر إنشاء ملف الحساب على السحابة: '+createError.message);return;}
       cloud=created;
     }
@@ -4214,7 +4275,10 @@ document.documentElement.classList.add('egybook-profile-bootstrap');
       publicProfileData={...cloud,id:authUser.id};
     }
     profileData={...profileData,username:cloud.username||profileData.username,name:cloud.full_name||'عضو EgyBook',
-      avatar:cloud.avatar_url||'',cover:cloud.cover_url||'',bio:cloud.bio||'',location:cloud.location||''};
+      avatar:cloud.avatar_url||'',cover:cloud.cover_url||'',bio:cloud.bio||'',location:cloud.location||'',
+      locationPrivacy:cloud.location_privacy||'public',birthdate:cloud.birthdate||'',birthdate_display:cloud.birthdate_display||'full',
+      birthdatePrivacy:cloud.birthdate_privacy||'public',relationship:cloud.relationship||'',relationshipPrivacy:cloud.relationship_privacy||'public',
+      work:cloud.work||'',workPrivacy:cloud.work_privacy||'public',education:cloud.education||'',educationPrivacy:cloud.education_privacy||'public'};
     try{
       const {data:privateData,error:privateError}=await supabase.from('profile_private').select('phone,birthdate,gender,website,privacy').eq('user_id',authUser.id).maybeSingle();
       if(privateError)console.warn('Private profile load:',privateError.message);
