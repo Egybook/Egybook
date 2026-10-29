@@ -5119,3 +5119,39 @@ body.post-controls-open{touch-action:auto!important}
 }
 
 #profileName{direction:ltr!important}
+
+.egy-call-overlay[hidden],.egy-chat-attachment-menu[hidden]{display:none!important}
+.egy-call-overlay{position:fixed;inset:0;z-index:9500;display:grid;place-items:center;padding:18px;background:rgba(1,7,20,.82);backdrop-filter:blur(12px);animation:egyCallFade .18s ease-out}
+.egy-call-card{position:relative;width:min(100%,430px);max-height:min(90dvh,760px);overflow:auto;display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px 20px 22px;border:1px solid rgba(0,217,255,.38);border-radius:28px;color:#eef8ff;background:radial-gradient(ellipse at top,rgba(8,123,255,.28),transparent 58%),linear-gradient(150deg,#081b3b,#030b1d);box-shadow:0 24px 90px #0009,0 0 35px #087bff25}
+.egy-call-close{position:absolute;top:12px;left:12px;width:38px;height:38px;border-radius:50%;border:1px solid #4773a5;background:#102746;color:#fff;font-size:24px}
+.egy-call-avatar{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;overflow:hidden;border:3px solid #08d9ff;background:linear-gradient(145deg,#087bff,#653cff);background-size:cover;background-position:center;font-size:36px;font-weight:800;box-shadow:0 0 28px #08cfff3d}
+.egy-call-avatar img{width:100%;height:100%;object-fit:cover}
+.egy-call-card h2{margin:0;font-size:21px;text-align:center}.egy-call-card p{margin:0;color:#a9c8ee;text-align:center;font-size:14px}
+.egy-call-videos{width:100%;display:grid;gap:8px;grid-template-columns:1fr 1fr}.egy-call-videos video{width:100%;max-height:240px;aspect-ratio:3/4;object-fit:cover;border-radius:16px;background:#020611}.egy-call-videos video[hidden]{display:none}
+.egy-call-actions{width:100%;display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:8px}.egy-call-actions button,.egy-chat-settings-card>button:not(.egy-call-close){border:1px solid #197db4;border-radius:16px;padding:12px 15px;color:#effaff;background:linear-gradient(130deg,#087bff,#0754b8);font-weight:700}.egy-call-actions .danger{background:linear-gradient(130deg,#f04464,#a51638);border-color:#f55b79}.egy-call-actions .accept{background:linear-gradient(130deg,#00bd8c,#008d69);border-color:#00dfaa}
+.egy-chat-settings-card label{width:100%;display:flex;align-items:center;gap:10px;padding:13px;border:1px solid #214b78;border-radius:14px;background:#091c38}.egy-chat-settings-card label input{width:20px;height:20px;accent-color:#08cfff}.egy-chat-settings-card>p{font-size:12px;line-height:1.7}
+.egy-chat-attachment-menu{position:relative;z-index:5;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:12px;margin:0 12px 6px;border:1px solid #155a91;border-radius:18px;background:linear-gradient(145deg,#0b2144,#061329);box-shadow:0 10px 28px #0005;animation:egyCallFade .16s ease-out}.egy-chat-attachment-menu button{min-height:44px;border:1px solid #174b7a;border-radius:12px;background:#0c2b51;color:#e7f7ff;font-size:13px}
+.chat-header-actions .messages-icon-button{opacity:1;cursor:pointer}.chat-header-actions .messages-icon-button:active{transform:scale(.94)}
+@keyframes egyCallFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+
+/* EgyBook chat composer refresh — WhatsApp-inspired, EgyBook identity */
+body.messages-thread-open .messages-thread-view{height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-height:none;min-height:0;border-radius:0;border:0;background:#08111d;}
+body.messages-thread-open .messages-thread-items{flex:1 1 auto;min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-behavior:auto;padding:14px 12px 18px;background:radial-gradient(ellipse at top,rgba(0,128,255,.07),transparent 55%),#09111b;}
+body.messages-thread-open .messages-send-form{display:flex;align-items:flex-end;gap:7px;position:relative;z-index:5;flex:0 0 auto;padding:9px 10px calc(9px + env(safe-area-inset-bottom))!important;background:#101b25!important;border-top:1px solid rgba(0,217,255,.16)!important;}
+body.messages-thread-open .messages-send-form textarea{flex:1 1 auto;min-width:0;max-height:120px;min-height:44px;height:44px;resize:none;overflow-y:auto;padding:11px 14px;border:1px solid rgba(0,217,255,.17);border-radius:23px;background:#202b32;color:#f3f8fc;font:inherit;font-size:15px;line-height:1.45;outline:none;box-sizing:border-box;touch-action:pan-y;}
+body.messages-thread-open .messages-send-form textarea:focus{border-color:rgba(0,217,255,.48);box-shadow:0 0 0 2px rgba(0,217,255,.06);}
+body.messages-thread-open .messages-send-form button{width:46px;height:46px;flex:0 0 46px;border-radius:50%;touch-action:manipulation;}
+body.messages-thread-open .messages-send-form .messages-extra-button{background:#202b32;border:1px solid rgba(0,217,255,.16);color:#9beeff;font-size:25px;box-shadow:none;padding:0;}
+body.messages-thread-open .messages-send-form .messages-mic-button{background:linear-gradient(145deg,#087bff,#00d9ff);color:#061426;font-size:22px;box-shadow:0 3px 12px rgba(0,150,255,.18);}
+body.messages-thread-open .messages-send-form.has-text .messages-mic-button{display:none;}
+.egy-chat-emoji-picker{position:fixed;z-index:9600;left:10px;right:10px;bottom:calc(74px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;padding:10px;border:1px solid rgba(0,217,255,.24);border-radius:18px;background:#101d29;box-shadow:0 10px 32px #0008;}
+.egy-chat-emoji-picker[hidden],.egy-chat-attachment-menu[hidden]{display:none!important}.egy-chat-emoji-picker button{min-width:0;border:0;background:transparent;font-size:23px;padding:5px;border-radius:9px;}
+.egy-chat-attachment-menu{position:fixed;z-index:9600;left:12px;bottom:calc(78px + env(safe-area-inset-bottom));display:grid;gap:4px;min-width:185px;padding:8px;border:1px solid rgba(0,217,255,.22);border-radius:16px;background:#101d29;box-shadow:0 10px 32px #0008;}
+.egy-chat-attachment-menu button{padding:11px 13px;border:0;border-radius:10px;background:transparent;color:#edf7ff;text-align:right;font:inherit;}
+.egy-chat-attachment-menu button:active,.egy-chat-emoji-picker button:active{background:rgba(0,217,255,.12)}
+@media(max-width:600px){.egy-chat-emoji-picker{grid-template-columns:repeat(7,minmax(0,1fr));}.egy-call-card{width:min(100%,440px)}}
+@media(prefers-reduced-motion:reduce){.egy-call-overlay,.egy-chat-attachment-menu{animation:none!important}}
+/* Reduce expensive mobile repaint effects without changing the brand palette. */
+@media(max-width:700px){.messages-thread-open .messages-thread-header,.messages-thread-open .messages-send-form,.egy-call-overlay{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.messages-thread-open .messages-thread-items{scroll-behavior:auto!important;contain:layout paint;}}
+
