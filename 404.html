@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جاري فتح صفحة EgyBook…</title>
+<script>
+(function(){
+  // Preserve the exact requested route while GitHub Pages falls back to 404.html.
+  // The query parameter is the primary handoff; sessionStorage is a fallback in
+  // case the query is stripped or another bootstrap step changes the URL.
+  var base = '/Egybook/';
+  var target = location.pathname + location.search + location.hash;
+  if (target.toLowerCase().indexOf(base.toLowerCase()) !== 0) target = base;
+  // Post permalinks are served by a dedicated HTML document, not the main app.
+  // GitHub Pages sends unknown /post/<id> paths here; hand the ID to /post/index.html.
+  var postMatch = target.match(/^\/Egybook\/post\/([^/?#]+)\/?(?:[?#].*)?$/i);
+  if (postMatch) {
+    var postId;
+    try { postId = decodeURIComponent(postMatch[1]); } catch (_) { postId = postMatch[1]; }
+    location.replace(base + 'post/?id=' + encodeURIComponent(postId));
+    return;
+  }
+  try { sessionStorage.setItem('egybook_pending_deep_link_v1', target); } catch (_) {}
+  location.replace(base + '?route=' + encodeURIComponent(target));
+})();
+</script>
+</head>
+<body style="background:#030918;color:#f5f8ff;font-family:Arial,sans-serif;text-align:center;padding:40px">
+جاري فتح صفحة EgyBook…
+</body>
+</html>
