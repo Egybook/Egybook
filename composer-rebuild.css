@@ -1,0 +1,326 @@
+/* EgyBook Post Composer — clean isolated rebuild. Other site pages are intentionally untouched. */
+:root{--ebc-bg:#030b1d;--ebc-panel:#071832;--ebc-panel2:#0a2142;--ebc-line:rgba(40,145,255,.48);--ebc-blue:#087cff;--ebc-cyan:#22d9ff;--ebc-text:#f2f8ff;--ebc-muted:#9eb3d0;--ebc-glow:0 0 28px rgba(0,126,255,.15)}
+#createPostModal[hidden],#imageEditorModal[hidden],#egybookVideoModal[hidden]{display:none!important}
+#createPostModal.egybook-composer-modal,#imageEditorModal.image-editor-modal,#egybookVideoModal.egybook-video-modal{position:fixed!important;inset:0!important;z-index:15000!important;display:flex;align-items:center;justify-content:center;padding:0!important;background:rgba(0,4,14,.88)!important;backdrop-filter:blur(14px);overscroll-behavior:contain}
+#imageEditorModal.image-editor-modal:not(.open),#egybookVideoModal.egybook-video-modal:not(.open){display:none!important}
+#createPostModal .egybook-composer-box{display:flex;flex-direction:column;gap:0;width:min(760px,calc(100vw - 40px));height:min(900px,calc(100dvh - 40px));max-height:calc(100dvh - 40px);margin:0;padding:0;overflow:hidden;border:1px solid rgba(31,151,255,.5);border-radius:28px;background:linear-gradient(150deg,#071b3a 0%,#030b1e 65%,#061633 100%);color:var(--ebc-text);box-shadow:0 30px 90px #0009,var(--ebc-glow);isolation:isolate}
+#createPostModal .new-composer-header{display:grid;grid-template-columns:52px minmax(0,1fr) 100px;align-items:center;gap:12px;flex:0 0 auto;padding:16px 22px;border-bottom:1px solid rgba(45,147,255,.24);background:linear-gradient(90deg,rgba(5,21,47,.98),rgba(4,15,37,.98))}
+#createPostModal .composer-x,#createPostModal .composer-next{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;height:46px;border:1px solid var(--ebc-line);border-radius:14px;background:#071a37;color:#e9f8ff;font-weight:750;cursor:pointer}
+#createPostModal .composer-x svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+#createPostModal .composer-next{border:0;background:linear-gradient(120deg,#078cff,#174bff);box-shadow:0 7px 20px #006cff33}
+#createPostModal .composer-brand-block{text-align:center;min-width:0}
+#createPostModal .brand-wordmark{display:block;color:#f5fbff;font-size:22px;font-weight:900;letter-spacing:-.7px;line-height:1.15}
+#createPostModal .brand-wordmark span{color:var(--ebc-cyan)}
+#createPostModal .new-composer-title{margin:7px 0 0;font-size:20px;line-height:1.3;font-weight:850;color:#eef7ff}
+#createPostModal .new-composer-title span{color:var(--ebc-cyan)}
+#createPostModal .composer-scroll-area{min-height:0;overflow:auto;overscroll-behavior:contain;padding:22px 26px calc(20px + env(safe-area-inset-bottom));scrollbar-width:thin;scrollbar-color:#174e83 transparent}
+#createPostModal .composer-identity{display:flex;align-items:center;gap:14px;margin-bottom:20px;min-width:0}
+#createPostModal .composer-user-avatar{display:flex;align-items:center;justify-content:center;flex:0 0 62px;width:62px;height:62px;border:2px solid #158cff;border-radius:50%;background:linear-gradient(145deg,#0c4b91,#06142e);background-size:cover;background-position:center;box-shadow:0 0 0 4px #087cff1b,0 0 20px #007bff38;color:#fff;font-size:23px;font-weight:800}
+#createPostModal .composer-user-avatar.has-photo{color:transparent}
+#createPostModal .composer-identity-copy{display:grid;gap:5px;min-width:0}
+#createPostModal .composer-identity-copy strong{font-size:18px;font-weight:800;overflow-wrap:anywhere}
+#createPostModal .composer-identity-copy small{font-size:12px;color:var(--ebc-muted);line-height:1.5}
+#createPostModal .composer-context-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 18px;padding:0}
+#createPostModal .composer-context-tools button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:70px;padding:10px 5px;border:1px solid var(--ebc-line);border-radius:17px;background:linear-gradient(145deg,rgba(9,35,70,.96),rgba(4,15,36,.96));color:#e7f5ff;font-size:12px;font-weight:700;line-height:1.25;text-align:center;white-space:normal;overflow-wrap:anywhere;cursor:pointer;transition:border-color .18s,transform .18s,background .18s}
+#createPostModal .composer-context-tools button:active,#createPostModal .composer-tool:active{transform:scale(.98)}
+#createPostModal .composer-context-tools svg{width:22px;height:22px;flex:0 0 22px;fill:none;stroke:var(--ebc-cyan);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#createPostModal .composer-form{display:flex;flex-direction:column;gap:16px;min-width:0}
+#createPostModal .composer-writing-card{display:block;min-width:0;padding:15px 18px 12px;border:1px solid rgba(43,142,255,.52);border-radius:22px;background:linear-gradient(145deg,rgba(2,12,31,.98),rgba(5,20,44,.92));box-shadow:inset 0 0 0 1px #1289ff0b}
+#createPostModal .composer-writing-label{display:block;margin-bottom:6px;color:#7fa6d2;font-size:12px;font-weight:700}
+#createPostModal .new-post-textarea{display:block;width:100%;min-width:0;min-height:145px;max-height:34dvh;resize:vertical;padding:8px 0;border:0!important;outline:0!important;background:transparent!important;color:var(--ebc-text)!important;box-shadow:none!important;font:inherit;font-size:21px;line-height:1.75;text-align:right}
+#createPostModal .new-post-textarea::placeholder{color:#92a9c8;opacity:1}
+#createPostModal .composer-section-label{display:block;margin-bottom:9px;color:#b5c8e0;font-size:13px;font-weight:750}
+#createPostModal .composer-upload-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#createPostModal .composer-tool{display:flex;align-items:center;justify-content:center;gap:10px;min-width:0;min-height:54px;padding:11px 12px;border:1px solid rgba(36,137,239,.4);border-radius:16px;background:#071831;color:#dceeff;font-size:14px;font-weight:750;cursor:pointer}
+#createPostModal .composer-tool svg{width:23px;height:23px;flex:0 0 23px;fill:none;stroke:var(--ebc-cyan);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#createPostModal .media-preview{position:relative;min-width:0;overflow:hidden;border:1px solid rgba(30,148,255,.65);border-radius:20px;background:#010817;box-shadow:0 0 24px #007bff1c}
+#createPostModal .media-preview[hidden]{display:none!important}
+#createPostModal .media-preview-content{display:flex;align-items:center;justify-content:center;min-height:90px;max-height:56dvh;overflow:auto;background:#010817}
+#createPostModal .media-preview-content img,#createPostModal .media-preview-content video{display:block;width:100%;height:auto;max-width:100%;max-height:56dvh;object-fit:contain;background:#010817}
+#createPostModal .media-preview-label{position:absolute;z-index:1;bottom:10px;right:10px;max-width:70%;padding:5px 9px;border-radius:9px;background:#020b1dcc;color:#d9eaff;font-size:11px;overflow-wrap:anywhere}
+#createPostModal .media-preview-actions{position:absolute;z-index:3;top:10px;left:10px;right:10px;display:flex;align-items:center;gap:7px;pointer-events:none}
+#createPostModal .media-preview-actions button{display:flex;align-items:center;justify-content:center;gap:6px;width:40px;height:40px;min-width:40px;padding:0;border:1px solid #318bdc;border-radius:13px;background:#06172beF;color:#f5fbff;pointer-events:auto;cursor:pointer}
+#createPostModal .media-preview-actions button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#createPostModal .media-preview-actions .media-add-button{width:auto;min-width:0;margin-right:auto;padding:0 12px;border-radius:13px}
+#createPostModal .media-preview-actions .media-add-button span{font-size:12px;font-weight:700;white-space:nowrap}
+#createPostModal .egybook-composer-box.has-media .new-post-textarea{min-height:72px;max-height:18dvh}
+#createPostModal .audience-picker{display:flex;align-items:center;gap:12px;width:100%;min-width:0;min-height:72px;padding:12px 15px;border:1px solid rgba(36,133,227,.4);border-radius:18px;background:linear-gradient(110deg,#07162f,#0a2142);color:#f0f7ff;text-align:right;cursor:pointer}
+#createPostModal .audience-picker-icon{display:flex;align-items:center;justify-content:center;flex:0 0 42px;width:42px;height:42px;border-radius:14px;background:#0a3970;color:var(--ebc-cyan);font-size:23px}
+#createPostModal .audience-copy{display:grid;gap:4px;flex:1;min-width:0}
+#createPostModal .audience-copy strong{font-size:15px;line-height:1.3}
+#createPostModal .audience-copy small{font-size:12px;line-height:1.4;color:var(--ebc-muted);overflow-wrap:anywhere}
+#createPostModal .audience-chevron{color:var(--ebc-cyan);font-size:23px}
+#createPostModal .publish-post-button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;margin-top:1px;padding:13px 18px;border:1px solid #258dff;border-radius:17px;background:linear-gradient(110deg,#078cff,#194aff);color:white;font-size:18px;font-weight:850;box-shadow:0 10px 25px #005eff30;cursor:pointer}
+#createPostModal .publish-post-button:disabled{opacity:.48;cursor:not-allowed;box-shadow:none}
+#createPostModal .publish-post-button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#imageEditorModal.image-editor-modal{z-index:1800!important;background:#010611!important;}
+#imageEditorModal .image-editor-box{display:flex;flex-direction:column;gap:16px;width:min(980px,calc(100vw - 48px));height:min(900px,calc(100dvh - 48px));max-height:calc(100dvh - 48px);margin:0;padding:18px;border:1px solid rgba(38,143,255,.5);border-radius:24px;background:linear-gradient(150deg,#071a38,#020817);color:var(--ebc-text);overflow:hidden}
+#imageEditorModal .image-editor-header{display:grid;grid-template-columns:48px minmax(0,1fr) 70px;align-items:center;gap:12px;flex:0 0 auto}
+#imageEditorModal .image-editor-header h2{margin:0;font-size:20px;font-weight:850}
+#imageEditorModal .image-editor-header p{margin:4px 0 0;color:var(--ebc-muted);font-size:12px}
+#imageEditorModal .image-editor-back,#imageEditorModal .image-editor-apply{display:flex;align-items:center;justify-content:center;min-width:0;height:44px;border:1px solid var(--ebc-line);border-radius:13px;background:#071a37;color:#fff;font-weight:800;cursor:pointer}
+#imageEditorModal .image-editor-back svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#imageEditorModal .image-editor-apply{border:0;background:linear-gradient(120deg,#078cff,#174bff)}
+#imageEditorModal .image-editor-stage{display:flex;align-items:center;justify-content:center;flex:1;min-height:0;overflow:hidden;border:1px solid rgba(30,128,230,.25);border-radius:18px;background:radial-gradient(ellipse at center,#0a2040,#010611 75%);touch-action:pan-y pinch-zoom;overscroll-behavior:contain}
+#imageEditorModal .image-editor-stage img{display:block;max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;transform-origin:center center}
+#imageEditorModal .image-editor-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;flex:0 0 auto}
+#imageEditorModal .image-editor-tools button{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:50px;border:1px solid var(--ebc-line);border-radius:14px;background:#071a37;color:#e9f6ff;font-weight:750;cursor:pointer}
+#imageEditorModal .image-editor-tools svg{width:21px;height:21px;fill:none;stroke:var(--ebc-cyan);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#imageEditorModal .image-editor-filters{display:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;flex:0 0 auto}
+#imageEditorModal .image-editor-filters.show{display:grid}
+#imageEditorModal .image-editor-filters button{min-width:0;min-height:42px;border:1px solid var(--ebc-line);border-radius:12px;background:#071a37;color:#e8f5ff;font-size:13px;cursor:pointer}
+#imageEditorModal .image-editor-filters button[aria-pressed="true"]{border-color:var(--ebc-cyan);color:var(--ebc-cyan);box-shadow:0 0 16px #00bfff25}
+#imageEditorModal .image-editor-note{flex:0 0 auto;margin:0;padding:9px 12px;border-radius:11px;background:#071a37;color:var(--ebc-muted);font-size:12px;line-height:1.5}
+#imageEditorModal.has-unsaved-edits .image-editor-note{color:#ffe2a4;border:1px solid #ffbe4133}
+#egybookVideoModal{z-index:1900!important;background:#000!important}
+#egybookVideoModal .egybook-video-box{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:24px;background:#000}
+#egybookVideoModal #egybookVideoPlayer{display:block;width:100%;height:100%;max-width:1200px;object-fit:contain;background:#000}
+#egybookVideoModal .egybook-video-close{position:absolute;z-index:5;top:calc(12px + env(safe-area-inset-top));right:14px;width:44px;height:44px;border:1px solid #ffffff55;border-radius:50%;background:#111c;color:#fff;font-size:30px;cursor:pointer}
+body.egybook-image-editor-active #createPostModal{pointer-events:none!important;user-select:none!important}
+body.egybook-image-editor-active #imageEditorModal{pointer-events:auto!important}
+@media(max-width:640px){
+ #createPostModal.egybook-composer-modal{align-items:stretch;padding:0!important;background:#030a19!important;backdrop-filter:none}
+ #createPostModal .egybook-composer-box{width:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0;padding-bottom:env(safe-area-inset-bottom)}
+ #createPostModal .new-composer-header{grid-template-columns:44px minmax(0,1fr) 78px;gap:8px;padding:calc(10px + env(safe-area-inset-top)) 13px 12px}
+ #createPostModal .composer-x,#createPostModal .composer-next{height:43px;border-radius:13px;font-size:13px}
+ #createPostModal .brand-wordmark{font-size:20px}
+ #createPostModal .new-composer-title{font-size:18px;margin-top:5px}
+ #createPostModal .composer-scroll-area{padding:17px 14px calc(16px + env(safe-area-inset-bottom))}
+ #createPostModal .composer-identity{gap:12px;margin-bottom:16px}
+ #createPostModal .composer-user-avatar{flex-basis:54px;width:54px;height:54px;font-size:20px}
+ #createPostModal .composer-identity-copy strong{font-size:16px}
+ #createPostModal .composer-context-tools{gap:6px;margin-bottom:14px}
+ #createPostModal .composer-context-tools button{min-height:64px;padding:7px 2px;border-radius:15px;font-size:10px;gap:5px}
+ #createPostModal .composer-context-tools button svg{width:20px;height:20px;flex-basis:20px}
+ #createPostModal .composer-form{gap:13px}
+ #createPostModal .composer-writing-card{padding:12px 14px 9px;border-radius:19px}
+ #createPostModal .new-post-textarea{min-height:130px;max-height:30dvh;font-size:19px}
+ #createPostModal .composer-tool{min-height:51px;gap:7px;padding:9px 7px;font-size:12px}
+ #createPostModal .composer-tool svg{width:21px;height:21px;flex-basis:21px}
+ #createPostModal .media-preview-content{max-height:48dvh}
+ #createPostModal .media-preview-content img,#createPostModal .media-preview-content video{max-height:48dvh}
+ #createPostModal .media-preview-actions{top:8px;left:8px;right:8px;gap:5px}
+ #createPostModal .media-preview-actions button{width:35px;height:35px;min-width:35px;border-radius:11px}
+ #createPostModal .media-preview-actions .media-add-button{padding:0 8px}
+ #createPostModal .media-preview-actions .media-add-button span{font-size:10px}
+ #createPostModal .audience-picker{min-height:65px;padding:10px 11px}
+ #createPostModal .audience-picker-icon{flex-basis:37px;width:37px;height:37px}
+ #createPostModal .publish-post-button{min-height:54px;font-size:17px}
+ #imageEditorModal.image-editor-modal{align-items:stretch;padding:0!important}
+ #imageEditorModal .image-editor-box{width:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+ #imageEditorModal .image-editor-stage{border-radius:14px}
+ #imageEditorModal .image-editor-tools button{flex-direction:column;gap:4px;min-height:56px;font-size:12px}
+ #imageEditorModal .image-editor-filters button{font-size:11px}
+ #egybookVideoModal .egybook-video-box{padding:0}
+}
+@media(max-width:370px){#createPostModal .composer-context-tools{gap:4px}#createPostModal .composer-context-tools button{font-size:9px}#createPostModal .composer-identity-copy small{font-size:11px}#createPostModal .composer-upload-row{gap:7px}}
+
+
+
+/* v57: compact composer controls, isolated audience layer and discard bottom sheet */
+#audienceModal.audience-modal{position:fixed!important;inset:0!important;z-index:15000!important;display:flex;align-items:stretch;justify-content:center;padding:0!important;background:#030b19!important;overscroll-behavior:contain}
+#audienceModal.audience-modal:not(.open){display:none!important}
+#audienceModal .audience-box{width:min(680px,100vw)!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;border-radius:0!important;overflow-y:auto!important;padding:calc(8px + env(safe-area-inset-top)) 20px calc(18px + env(safe-area-inset-bottom))!important;background:linear-gradient(160deg,#071a36,#030b1c 70%)!important;border:0!important;box-shadow:none!important}
+#audienceModal .audience-header{display:grid!important;grid-template-columns:48px 1fr 48px!important;align-items:center!important;gap:10px!important;min-height:48px!important;margin:0 0 22px!important;padding:0!important;border:0!important;direction:ltr!important}
+#audienceModal .audience-header .brand-wordmark{display:none!important}
+#audienceModal .audience-header .audience-back{grid-column:3;grid-row:1;justify-self:end;width:44px!important;height:44px!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(44,161,255,.4)!important;border-radius:14px!important;background:#071b38!important;color:#dff7ff!important;font-size:27px!important}
+#audienceModal .audience-header .audience-more{grid-column:1;grid-row:1;width:44px!important;height:44px!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(44,161,255,.4)!important;border-radius:14px!important;background:#071b38!important;color:#dff7ff!important;font-size:20px!important}
+#audienceModal #audienceTitle{margin:8px 0 12px!important;font-size:clamp(21px,4vw,28px)!important;line-height:1.45!important;text-align:right!important}
+#audienceModal .audience-help{margin:0 0 22px!important;color:#9fb7d6!important;font-size:14px!important;line-height:1.8!important}
+#audienceModal .audience-choices{display:grid!important;gap:10px!important}
+#audienceModal .audience-option{min-height:76px!important;padding:12px 14px!important;border-radius:18px!important;background:linear-gradient(110deg,#081a34,#06142b)!important;border:1px solid rgba(65,145,224,.3)!important}
+#audienceModal .audience-option.selected{border:2px solid #17bfff!important;box-shadow:0 0 16px rgba(0,174,255,.14)!important}
+#audienceModal .audience-option-copy strong{font-size:16px!important}
+#audienceModal .audience-option-copy small{font-size:12px!important}
+#audienceModal .audience-option-icon{width:42px!important;height:42px!important;flex-basis:42px!important}
+#audienceModal .audience-default-row{margin-top:18px!important}
+#audienceModal .audience-done{position:sticky!important;bottom:0!important;margin-top:16px!important;width:100%!important;min-height:52px!important;border-radius:15px!important;background:linear-gradient(100deg,#087cff,#08b9ed)!important;color:white!important}
+#body.egybook-layer-isolated #audienceModal{pointer-events:auto}
+#imageEditorModal.image-editor-modal{z-index:15010!important}
+#imageEditorModal .image-editor-box{max-width:100vw!important}
+.composer-discard-modal{position:fixed!important;inset:0!important;z-index:2147483000!important;display:flex;align-items:flex-end;justify-content:center;padding:0!important;background:rgba(0,5,18,.58)!important;backdrop-filter:blur(7px);overscroll-behavior:contain;pointer-events:auto!important;isolation:isolate}
+.composer-discard-modal:not(.open){display:none!important}
+.composer-discard-sheet{width:min(620px,100vw);padding:10px 20px calc(22px + env(safe-area-inset-bottom));border:1px solid rgba(49,160,255,.42);border-bottom:0;border-radius:25px 25px 0 0;background:linear-gradient(155deg,#0b2347,#040d20 75%);box-shadow:0 -18px 50px rgba(0,115,255,.2);transform:translateY(0);transition:transform .18s ease;touch-action:none}
+.discard-sheet-grabber{width:42px;height:5px;border-radius:8px;background:#6689b5;margin:0 auto 20px}
+.composer-discard-sheet h2{margin:0 0 7px;color:#f3f9ff;font-size:20px;text-align:center}
+.composer-discard-sheet p{margin:0 0 20px;color:#9fb6d4;font-size:14px;text-align:center;line-height:1.6}
+.composer-discard-sheet button{display:flex;align-items:center;justify-content:center;width:100%;min-height:51px;margin-top:10px;border-radius:15px;font:700 15px inherit;cursor:pointer}
+.discard-continue{border:1px solid #188fff;background:linear-gradient(100deg,#064caa,#087fdf);color:white}
+.discard-confirm{border:1px solid rgba(255,75,103,.5);background:rgba(111,20,42,.25);color:#ff8298}
+body.egybook-discard-sheet-open{overflow:hidden!important}
+@media(min-width:760px){
+ #createPostModal .new-composer-header{padding:11px 18px!important}
+ #createPostModal .composer-scroll-area{padding:18px 24px 24px!important}
+ #createPostModal .composer-identity{margin-bottom:12px!important}
+ #createPostModal .composer-user-avatar{width:48px!important;height:48px!important;flex-basis:48px!important}
+ #createPostModal .composer-context-tools{gap:8px!important;margin-bottom:12px!important}
+ #createPostModal .composer-context-tools button{min-height:56px!important;padding:7px 8px!important;flex-direction:row!important;gap:7px!important;font-size:12px!important;border-radius:14px!important}
+ #createPostModal .composer-context-tools button svg{width:19px!important;height:19px!important;flex-basis:19px!important}
+ #createPostModal .composer-writing-card{padding:10px 15px!important;border-radius:17px!important}
+ #createPostModal .new-post-textarea{min-height:100px!important;max-height:22dvh!important;font-size:18px!important}
+ #createPostModal .composer-form{gap:10px!important}
+}
+@media(max-width:759px){
+ #createPostModal .new-composer-header{grid-template-columns:42px minmax(0,1fr) 86px!important;gap:7px!important;padding:calc(7px + env(safe-area-inset-top)) 12px 9px!important}
+ #createPostModal .brand-wordmark{font-size:18px!important}
+ #createPostModal .new-composer-title{font-size:17px!important;margin-top:2px!important}
+ #createPostModal .composer-scroll-area{padding:12px 13px calc(14px + env(safe-area-inset-bottom))!important}
+ #createPostModal .composer-identity{margin-bottom:11px!important;gap:10px!important}
+ #createPostModal .composer-user-avatar{width:46px!important;height:46px!important;flex-basis:46px!important}
+ #createPostModal .composer-context-tools{gap:6px!important;margin-bottom:10px!important}
+ #createPostModal .composer-context-tools button{min-height:53px!important;padding:6px 3px!important;border-radius:13px!important;font-size:10px!important;gap:4px!important}
+ #createPostModal .composer-context-tools button svg{width:18px!important;height:18px!important;flex-basis:18px!important}
+ #createPostModal .composer-form{gap:10px!important}
+ #createPostModal .composer-writing-card{padding:10px 12px 8px!important;border-radius:17px!important}
+ #createPostModal .new-post-textarea{min-height:100px!important;max-height:23dvh!important;font-size:18px!important}
+ #createPostModal .composer-tool{min-height:46px!important;padding:7px!important}
+ #audienceModal .audience-box{padding-left:15px!important;padding-right:15px!important}
+}
+
+/* Keep the composer/editor above fixed site navigation and prevent the underlying page from visually bleeding through. */
+#createPostModal.egybook-composer-modal{z-index:15000!important}
+#imageEditorModal.image-editor-modal{z-index:15010!important}
+#audienceModal.audience-modal{z-index:15000!important}
+#composerDiscardModal.composer-discard-modal{z-index:15100!important}
+
+/* Discard sheet is an independent interactive layer above the image editor. */
+#composerDiscardModal{z-index:2147483000!important;pointer-events:auto!important}
+#composerDiscardModal .composer-discard-sheet{position:relative;pointer-events:auto;touch-action:pan-x}
+#composerDiscardModal button{position:relative;z-index:2;pointer-events:auto;touch-action:manipulation}
+#composerDiscardModal .discard-sheet-grabber{touch-action:none;cursor:grab}
+
+
+/* v93 — Facebook-style composer sheet: smooth entry/exit and safe mobile back handling.
+   The composer stays mounted for the exit transition; JS hides it only after animation. */
+#createPostModal.egybook-composer-modal{
+  visibility:hidden;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .28s ease, visibility 0s linear .38s;
+}
+#createPostModal.egybook-composer-modal.open{
+  visibility:visible;
+  opacity:1;
+  pointer-events:auto;
+  transition:opacity .28s ease, visibility 0s;
+}
+#createPostModal.egybook-composer-modal.is-closing{
+  visibility:visible;
+  opacity:0;
+  pointer-events:auto;
+  transition:opacity .28s ease, visibility 0s;
+}
+#createPostModal .egybook-composer-box{
+  transform:translateY(18px) scale(.995);
+  transition:transform .34s cubic-bezier(.22,.8,.25,1);
+  will-change:transform;
+}
+#createPostModal.open .egybook-composer-box{transform:translateY(0) scale(1)}
+#createPostModal.is-closing .egybook-composer-box{transform:translateY(105%) scale(1)}
+@media(max-width:640px){
+  #createPostModal.egybook-composer-modal{
+    align-items:flex-end!important;
+    padding:0!important;
+    background:rgba(0,4,14,.72)!important;
+    -webkit-backdrop-filter:blur(3px);
+    backdrop-filter:blur(3px);
+    overscroll-behavior:contain;
+    touch-action:pan-y;
+  }
+  #createPostModal .egybook-composer-box{
+    width:100%!important;
+    height:100dvh!important;
+    max-height:100dvh!important;
+    margin:0!important;
+    border:1px solid rgba(31,151,255,.32)!important;
+    border-bottom:0!important;
+    border-radius:20px 20px 0 0!important;
+    padding-bottom:env(safe-area-inset-bottom)!important;
+    transform:translateY(105%);
+    transition:transform .38s cubic-bezier(.22,.8,.25,1);
+  }
+  #createPostModal.open .egybook-composer-box{transform:translateY(0)}
+  #createPostModal.is-closing .egybook-composer-box{transform:translateY(105%)}
+}
+@media(prefers-reduced-motion:reduce){
+  #createPostModal.egybook-composer-modal,
+  #createPostModal .egybook-composer-box{transition-duration:.01ms!important}
+}
+
+@media(max-width:640px){
+  #createPostModal .egybook-composer-box{position:relative}
+  #createPostModal .new-composer-header{
+    position:relative;
+    padding-top:calc(17px + env(safe-area-inset-top))!important;
+    touch-action:pan-y;
+  }
+  #createPostModal .new-composer-header::after{
+    content:"";
+    position:absolute;
+    top:6px;
+    left:50%;
+    width:38px;
+    height:4px;
+    border-radius:999px;
+    transform:translateX(-50%);
+    background:rgba(177,211,255,.62);
+    box-shadow:0 0 8px rgba(0,150,255,.18);
+    pointer-events:none;
+  }
+}
+
+
+/* v105 — composer owns its viewport; native vertical scrolling remains available while media is selected. */
+#createPostModal.egybook-composer-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;overscroll-behavior:contain!important;touch-action:pan-y!important;}
+#createPostModal .egybook-composer-box{min-height:0!important;overflow:hidden!important;}
+#createPostModal .composer-scroll-area{min-height:0!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;overflow-x:hidden!important;}
+#createPostModal .media-preview-content{overscroll-behavior:contain;touch-action:pan-y pinch-zoom!important;}
+#createPostModal .composer-media-preview-item{touch-action:pan-y pinch-zoom!important;pointer-events:auto!important;-webkit-user-drag:none!important;user-select:none!important;}
+#createPostModal .composer-media-item-card{min-width:0;overscroll-behavior:contain;}
+/* Hidden file inputs must remain activatable while the composer makes background pages inert. */
+#photoInput,#videoInput{pointer-events:auto!important;}
+
+/* v114: visible in-app composer heading, native image scrolling and lighter mobile layer. */
+#createPostModal .new-composer-header{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  min-height:64px!important;height:64px!important;padding:8px 64px 8px 14px!important;
+  border-bottom:1px solid rgba(45,147,255,.22)!important;background:rgba(4,15,37,.96)!important;
+}
+#createPostModal .new-composer-header .composer-brand-block{
+  display:flex!important;position:absolute!important;left:14px!important;right:auto!important;
+  top:50%!important;transform:translateY(-50%)!important;flex-direction:column!important;
+  align-items:flex-start!important;gap:2px!important;max-width:calc(100% - 92px)!important;
+  margin:0!important;text-align:left!important;direction:ltr!important;pointer-events:none!important;
+}
+#createPostModal .new-composer-header .composer-brand-block .brand-wordmark{
+  display:block!important;font-size:17px!important;line-height:1.1!important;
+}
+#createPostModal .new-composer-header .composer-brand-block .new-composer-title{
+  display:block!important;margin:1px 0 0!important;font-size:14px!important;line-height:1.25!important;
+  text-align:left!important;direction:rtl!important;color:#eaf6ff!important;
+}
+#createPostModal .new-composer-header .composer-x{
+  position:absolute!important;right:12px!important;left:auto!important;top:10px!important;
+  width:42px!important;height:42px!important;margin:0!important;z-index:4!important;
+}
+/* Keep the image's vertical gesture native; the image only reacts to a stationary tap. */
+#createPostModal .composer-scroll-area{touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important;}
+#createPostModal .media-preview-content,
+#createPostModal .composer-media-item-card,
+#createPostModal .composer-media-preview-item{
+  touch-action:pan-y pinch-zoom!important;overscroll-behavior:auto!important;
+  -webkit-user-select:none!important;user-select:none!important;-webkit-user-drag:none!important;
+}
+#createPostModal .composer-media-item-card{contain:layout paint!important;}
+#createPostModal .composer-media-preview-item{animation:none!important;transition:none!important;transform:none!important;}
+/* Avoid a full-screen blur/repaint while the composer is open on low-memory phones. */
+#createPostModal.egybook-composer-modal{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;}
+#createPostModal .egybook-composer-box{will-change:auto!important;}
+#createPostModal.open .egybook-composer-box,
+#createPostModal.is-closing .egybook-composer-box{will-change:transform!important;}
+@media(max-width:640px){
+  #createPostModal.egybook-composer-modal{background:rgba(0,4,14,.88)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;}
+  #createPostModal .new-composer-header{padding-top:calc(8px + env(safe-area-inset-top))!important;height:calc(64px + env(safe-area-inset-top))!important;min-height:calc(64px + env(safe-area-inset-top))!important;}
+  #createPostModal .new-composer-header::after{display:none!important;}
+  #createPostModal .new-composer-header .composer-x{top:calc(10px + env(safe-area-inset-top))!important;}
+}
