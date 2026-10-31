@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="egybook-profile-bootstrap">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030918">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="EgyBook — تواصل وشارك مع مجتمعك">
+
+<style>
+html.egybook-profile-bootstrap {
+  visibility: hidden !important;
+  background: #030918 !important;
+}
+html.egybook-profile-bootstrap body,
+html.egybook-profile-bootstrap body > * {
+  visibility: hidden !important;
+}
+</style>
+
+<!-- Deep-link restoration is handled once by script.js after capturing the 404 handoff. -->
+<title>EgyBook | إنشاء منشور</title>
+
+<script>
+(function(){
+  var p = location.pathname.replace(/\/+$/, '');
+  if (
+    p === '/Egybook/composer' ||
+    p === '/Egybook/composer/index.html'
+  ) {
+    document.documentElement.classList.add('egybook-composer-route');
+  }
+})();
+</script>
+
+<link rel="stylesheet" href="/Egybook/styles.css?v=108-composer-route-scroll-stability">
+<link rel="stylesheet" href="/Egybook/composer-rebuild.css?v=108-composer-route-scroll-stability">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar-brand-group">
+    <button class="icon-button menu-trigger" type="button" data-action="sidebar-toggle" aria-label="فتح القائمة الجانبية" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 6h18M3 12h18M3 18h18"/>
+      </svg>
+    </button>
+    <a class="logo" href="/Egybook/" aria-label="EgyBook">Egy<span>Book</span></a>
+  </div>
+
+  <div class="header-actions">
+    <button class="icon-button memez-trigger" type="button" data-action="memez-open" aria-label="EgyBook MEMEZ">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 5 12 3l2 14-8 2zM10 7l8-2 3 13-8 2"/>
+        <path d="m7 10 3-1M8 14l3-1M15 9l3-1M16 13l3-1"/>
+      </svg>
+    </button>
+
+    <button class="icon-button" type="button" data-action="search" aria-label="بحث">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10.5" cy="10.5" r="6.5"/>
+        <path d="m15.5 15.5 5 5"/>
+      </svg>
+    </button>
+
+    <button class="icon-button message" type="button" data-action="messages" aria-label="الرسائل">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 4.5h16a2.5 2.5 0 0 1 2.5 2.5v9a2.5 2.5 0 0 1-2.5 2.5h-8l-5.5 3v-3H4A2.5 2.5 0 0 1 1.5 16V7A2.5 2.5 0 0 1 4 4.5Z"/>
+        <path d="m3 7 9 6.5L21 7"/>
+      </svg>
+      <span class="badge" data-message-badge hidden>0</span>
+    </button>
+
+    <button class="icon-button header-notifications-button" type="button" data-action="notifications" aria-label="الإشعارات">
+      <span class="header-notification-badge" hidden></span>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop" data-action="sidebar-close" hidden></div>
+
+<aside class="egy-sidebar" id="egySidebar" aria-label="القائمة الجانبية" aria-hidden="true">
+  <div class="sidebar-head">
+    <a class="logo sidebar-logo" href="/Egybook/" aria-label="EgyBook">Egy<span>Book</span></a>
+    <button class="sidebar-close" type="button" data-action="sidebar-close" aria-label="إغلاق القائمة">×</button>
+  </div>
+
+  <div class="sidebar-account">
+    <button class="sidebar-account-avatar avatar" type="button" data-action="profile" aria-label="فتح الملف الشخصي">ح</button>
+    <div class="sidebar-account-info">
+      <strong id="sidebarAccountName">حسابي</strong>
+      <span id="sidebarAccountHandle">@egybook_user</span>
+    </div>
+    <button class="sidebar-edit" type="button" data-action="edit-profile" aria-label="تعديل الملف الشخصي">✎</button>
+    <button class="sidebar-profile-link" type="button" data-action="profile">عرض الملف الشخصي <span>›</span></button>
+  </div>
+
+  <nav class="sidebar-menu" aria-label="إعدادات الحساب">
+    <button type="button" data-action="profile"><span class="sidebar-item-icon">👤</span><span>الملف الشخصي</span><b>‹</b></button>
+    <button type="button" data-action="sidebar-friends"><span class="sidebar-item-icon">👥</span><span>الأصدقاء</span><b>‹</b></button>
+    <button type="button" data-action="notifications"><span class="sidebar-item-icon">🔔</span><span>الإشعارات</span><b class="sidebar-alert">3</b></button>
+    <button type="button" data-action="sidebar-saved"><span class="sidebar-item-icon">🔖</span><span>العناصر المحفوظة</span><b>‹</b></button>
+    <button type="button" data-action="sidebar-activity"><span class="sidebar-item-icon">◷</span><span>نشاطي</span><b>‹</b></button>
+    <button type="button" data-action="sidebar-dashboard"><span class="sidebar-item-icon">▦</span><span>لوحة التحكم<small>الأدوات والإحصائيات</small></span><b>‹</b></button>
+
+    <div class="sidebar-divider"></div>
+
+    <button type="button" data-action="sidebar-settings"><span class="sidebar-item-icon">⚙</span><span>الإعدادات والخصوصية</span><b>⌄</b></button>
+    <button type="button" data-action="sidebar-appearance"><span class="sidebar-item-icon">◐</span><span>المظهر والثيمات</span><b>‹</b></button>
+    <button type="button" data-action="sidebar-language"><span class="sidebar-item-icon">◎</span><span>اللغة</span><b>‹</b></button>
+    <button type="button" data-action="sidebar-help"><span class="sidebar-item-icon">?</span><span>المساعدة والدعم</span><b>‹</b></button>
+  </nav>
+
+  <button type="button" class="sidebar-logout" data-action="sidebar-logout">⇥ تسجيل الخروج</button>
+</aside>
+
+<main class="container" id="home">
+
+  <nav class="top-navigation" aria-label="التنقل الرئيسي">
+    <button class="top-nav-item active" data-page="home">الرئيسية</button>
+    <button class="top-nav-item" data-page="friends">الأصدقاء</button>
+    <button class="top-nav-item" data-page="explore">استكشف</button>
+    <button class="top-nav-item" data-page="reels">الريلز</button>
+    <button class="top-nav-item" data-page="saved">المحفوظات</button>
+  </nav>
+
+  <section class="create-post" aria-label="إنشاء منشور">
+    <div class="composer-row">
+      <button class="avatar composer-avatar" type="button" data-action="profile" aria-label="فتح الملف الشخصي">ح</button>
+      <button class="composer-input" type="button" data-action="open-post-composer">شارك ما يدور في ذهنك ..</button>
+    </div>
+
+    <div class="composer-tools">
+      <button class="composer-tool photo" data-action="photo">صورة</button>
+      <button class="composer-tool video" data-action="video">فيديو</button>
+      <button class="composer-tool location" data-action="location">موقع</button>
+      <button class="composer-tool music" data-action="music">موسيقى</button>
+    </div>
+
+    <input id="photoInput" type="file" accept="image/*" multiple hidden>
+    <input id="videoInput" type="file" accept="video/*" hidden>
+  </section>
+
+  <section class="section" id="storiesSection">
+    <div class="section-heading">
+      <h2>القصص</h2>
+      <button class="section-link" data-action="all-stories">عرض الكل</button>
+    </div>
+    <div class="stories" id="storiesList">
+      <button class="story story-add" data-action="add-story">
+        <span class="story-ring"><span class="avatar">＋</span></span>
+        <span class="story-name">إضافة قصتك</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="section" id="feedSection">
+    <div class="section-heading feed-heading">
+      <h2 id="feedTitle">أحدث المنشورات</h2>
+      <button class="sort-button" id="sortButton" data-action="sort">الأحدث ▾</button>
+    </div>
+    <div id="postsList"></div>
+    <p id="emptyMessage" class="empty-message" hidden></p>
+  </section>
+
+</main>
+
+<section class="reels-page" id="reelsPage" hidden aria-label="مشغل الريلز">
+  <header class="reels-page-head">
+    <button type="button" data-action="reels-close" aria-label="رجوع">←</button>
+    <div><strong>EgyBook</strong><span>ريلز</span></div>
+    <label class="reels-upload">＋ إضافة فيديو
+      <input id="reelUploadInput" type="file" accept="video/mp4,video/webm,video/quicktime" hidden>
+    </label>
+  </header>
+  <div id="reelsStage" class="reels-stage">
+    <div class="reels-empty">
+      <span>▶</span>
+      <h2>الريلز</h2>
+      <p>اختار فيديو من جهازك لتجربة المشغّل، أو افتح ريلز يحتوي على فيديو منشور.</p>
+      <button type="button" data-action="reels-upload">اختيار فيديو</button>
+    </div>
+  </div>
+</section>
+
+<section class="memez-page" id="memezPage" hidden aria-labelledby="memezTitle">
+  <button class="memez-back" type="button" data-action="memez-close" aria-label="رجوع">←</button>
+  <div class="memez-hero">
+    <h1 id="memezTitle">EgyBook <span>MEMEZ</span> ✨</h1>
+    <p>اصنع ميمز وكوميك جاهزة للنشر</p>
+  </div>
+  <div class="memez-options">
+    <button type="button" data-action="memez-coming"><strong>قوالب جاهزة</strong></button>
+    <button type="button" data-action="memez-coming"><strong>إنشاء بالذكاء الاصطناعي</strong></button>
+    <button type="button" data-action="memez-coming"><strong>تصميم مخصص</strong></button>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/Egybook/script.js?v=108-composer-route-scroll-stability" defer></script>
+
+</body>
+</html>
