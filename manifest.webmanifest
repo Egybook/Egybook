@@ -1,0 +1,37 @@
+{
+  "name": "EgyBook — إيجي بوك",
+  "short_name": "EgyBook",
+  "description": "تواصل وشارك مع مجتمعك",
+  "start_url": "/Egybook/",
+  "scope": "/Egybook/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "background_color": "#030918",
+  "theme_color": "#030918",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/Egybook/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Egybook/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Egybook/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
