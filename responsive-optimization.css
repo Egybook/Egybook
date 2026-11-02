@@ -1,0 +1,57 @@
+/* EgyBook Responsive & Smooth UI Layer v160
+   Additive overrides only: preserves existing themes and component styling. */
+:root {
+  --egb-safe-top: env(safe-area-inset-top, 0px);
+  --egb-safe-right: env(safe-area-inset-right, 0px);
+  --egb-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --egb-safe-left: env(safe-area-inset-left, 0px);
+  --egb-page-gutter: clamp(8px, 2.2vw, 22px);
+}
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { min-width: 0; min-height: 100vh; min-height: 100dvh; overflow-x: clip; }
+button, input, textarea, select { font: inherit; }
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+img, video, canvas, svg { max-width: 100%; }
+img, video { height: auto; }
+.container, #profilePage, .section, .post, .modal-box, .profile-content { min-width: 0; }
+.container { width: min(100%, 780px); padding-inline: var(--egb-page-gutter); padding-bottom: calc(112px + var(--egb-safe-bottom)); }
+.topbar { padding-top: max(8px, var(--egb-safe-top)); padding-inline: max(var(--egb-page-gutter), var(--egb-safe-left)); }
+.bottom-navigation { padding-bottom: max(8px, var(--egb-safe-bottom)); }
+.post, .create-post, .section, .profile-content, .modal-box { overflow-wrap: anywhere; }
+.post img, .post video, .profile-cover img, .profile-cover video { max-width: 100%; }
+.top-navigation, .stories, .bottom-navigation { overscroll-behavior-inline: contain; }
+:where(button, a, input, textarea, select) { touch-action: manipulation; }
+@media (max-width: 359px) {
+  .container { padding-inline: 7px; }
+  .topbar { gap: 5px; padding-inline: 7px; }
+  .header-actions { gap: 3px; }
+  .topbar .icon-button { width: 34px; height: 34px; }
+  .bottom-navigation { gap: 0; padding-inline: 3px; }
+  .bottom-item { font-size: 9px; }
+  .bottom-item.create-button { flex-basis: 50px; width: 50px; }
+}
+@media (min-width: 600px) and (max-width: 1023px) {
+  .container { width: min(100% - 32px, 820px); }
+  #profilePage { width: min(100% - 32px, 900px); margin-inline: auto; }
+  .post, .create-post { border-radius: 20px; }
+}
+@media (min-width: 1024px) {
+  .container { width: min(100% - 48px, 860px); }
+  #profilePage { width: min(100% - 48px, 1040px); margin-inline: auto; }
+  .bottom-navigation { padding-bottom: 8px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .topbar { min-height: 54px; }
+  .bottom-navigation { min-height: 58px; }
+  .bottom-item { height: 48px; }
+  .bottom-item.create-button { height: 50px; margin-top: -8px; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .icon-button, .bottom-item, .top-nav-item { touch-action: manipulation; }
+}
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+html[data-egb-performance="conserve"] .decorative-motion,
+html[data-egb-performance="conserve"] .ambient-animation { animation: none !important; }
