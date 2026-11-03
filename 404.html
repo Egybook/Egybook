@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جاري فتح صفحة EgyBook…</title>
+<script>
+(function(){
+  var base = '/Egybook/';
+  var target = location.pathname + location.search + location.hash;
+  var safeTarget = base;
+  try {
+    var parsed = new URL(target, location.origin);
+    var baseLower = base.toLowerCase();
+    // Only hand off paths inside this GitHub Pages project. Reject external,
+    // nested route handoffs, and very long URLs before they can grow recursively.
+    var alreadyWrapped = new URLSearchParams(parsed.search).has('route');
+    if (parsed.origin === location.origin && parsed.pathname.toLowerCase().indexOf(baseLower) === 0 &&
+        !alreadyWrapped && target.length <= 1000) {
+      safeTarget = parsed.pathname + parsed.search + parsed.hash;
+    }
+  } catch (_) {}
+  try { sessionStorage.setItem('egybook_pending_deep_link_v1', safeTarget); } catch (_) {}
+  var destination = new URL(base, location.origin);
+  if (safeTarget !== base) destination.searchParams.set('route', safeTarget);
+  location.replace(destination.href);
+})();
+</script>
+</head>
+<body style="background:#030918;color:#f5f8ff;font-family:Arial,sans-serif;text-align:center;padding:40px">
+جاري فتح صفحة EgyBook…
+</body>
+</html>
