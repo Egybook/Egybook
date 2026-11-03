@@ -1,0 +1,45 @@
+(() => {
+ try { sessionStorage.removeItem('egybook_auth_redirect_failed'); } catch (_) {}
+ const SUPABASE_URL='https://ezmglhwjiozevjebmgmj.supabase.co';
+ const SUPABASE_KEY='sb_publishable_-YdgiJ_J-oFXugV3xwxNCA_Gog1dJrb';
+ const client=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ const $=s=>document.querySelector(s), page=document.body.dataset.page;
+ const msg=(s,bad=false)=>{const el=$('#hint');if(el){el.textContent=s;el.style.color=bad?'#ff9baf':'#9feaff';}};
+ const go=name=>location.href=`${name}.html`;
+ const getSafeReturn=()=>{
+  const fallback=new URL('../index.html',location.href).href;
+  const raw=new URLSearchParams(location.search).get('return');
+  if(!raw)return fallback;
+  try{
+   const candidate=new URL(raw,location.href);
+   const appRoot=new URL('../',location.href);
+   if(candidate.origin!==location.origin || !candidate.pathname.startsWith(appRoot.pathname) || /\/auth-system\//i.test(candidate.pathname))return fallback;
+   return candidate.href;
+  }catch(_){return fallback;}
+ };
+ const finishLogin=()=>location.replace(getSafeReturn());
+ const value=id=>$('#'+id)?.value.trim()||'';
+ const cleanUsername=s=>s.trim().replace(/^@/,'');
+ const busy=(btn,on,label)=>{if(!btn)return;btn.disabled=on;if(label)btn.textContent=label;};
+ document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(a.dataset.go)}));
+ document.querySelectorAll('.eye').forEach(b=>b.addEventListener('click',()=>{const input=$('#'+b.dataset.target);if(input){input.type=input.type==='password'?'text':'password';b.textContent=input.type==='password'?'◉':'◎';}}));
+ document.querySelectorAll('.otp').forEach(box=>{const inputs=[...box.querySelectorAll('input')];inputs.forEach((el,i)=>{el.addEventListener('input',()=>{el.value=el.value.replace(/\D/g,'').slice(0,1);if(el.value&&inputs[i+1])inputs[i+1].focus()});el.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!el.value&&inputs[i-1])inputs[i-1].focus()});el.addEventListener('paste',e=>{const t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,inputs.length);if(t){e.preventDefault();[...t].forEach((c,j)=>inputs[j].value=c);inputs[Math.min(t.length,inputs.length-1)].focus()}})});});
+ const otpValue=()=>[...document.querySelectorAll('.otp input')].map(x=>x.value).join('');
+ if(page==='login'){
+  let method=new URLSearchParams(location.search).get('method')==='phone'?'phone':'email';const tabs=[...document.querySelectorAll('[data-method]')];
+  const setMethod=m=>{method=m;tabs.forEach(t=>t.classList.toggle('active',t.dataset.method===m));$('#emailLogin').classList.toggle('hidden',m!=='email');$('#phoneLogin').classList.toggle('hidden',m!=='phone');$('#loginEmail').required=m==='email';$('#loginPassword').required=m==='email';$('#loginPhone').required=m==='phone'};tabs.forEach(t=>t.addEventListener('click',()=>setMethod(t.dataset.method)));setMethod(method);
+  $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return msg('تعذر الاتصال بخدمة الحسابات.',true);const b=$('#loginBtn');busy(b,true,'جارٍ تسجيل الدخول…');try{let result;if(method==='email')result=await client.auth.signInWithPassword({email:value('loginEmail'),password:$('#loginPassword').value});else result=await client.auth.signInWithOtp({phone:value('loginPhone'),options:{shouldCreateUser:false}});if(result.error)throw result.error;if(method==='phone'){sessionStorage.removeItem('egyAuthSignupMeta');sessionStorage.removeItem('egyAuthNewAccount');sessionStorage.setItem('egyAuthPhone',value('loginPhone'));sessionStorage.setItem('egyAuthReturn',getSafeReturn());go('verify-phone');return}finishLogin()}catch(err){msg(err.message||'تعذر تسجيل الدخول.',true)}finally{busy(b,false,'تسجيل الدخول')}});
+  $('#forgotLink').addEventListener('click',()=>go('forgot-password'));
+ }
+ if(page==='register-phone'||page==='register-email'){
+  const phone=page==='register-phone';$('#signupForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return msg('تعذر الاتصال بخدمة الحسابات.',true);const b=$('#signupBtn');busy(b,true,'جارٍ إنشاء الحساب…');try{const full_name=value('fullName'),username=cleanUsername(value('username')),password=$('#password').value;if(full_name.length<2)throw Error('اكتب الاسم الكامل.');if(!/^[A-Za-z0-9._]{3,30}$/.test(username))throw Error('اسم المستخدم مطلوب: 3 إلى 30 حرفًا إنجليزيًا أو رقمًا أو نقطة أو _.');if(password.length<8)throw Error('كلمة المرور يجب ألا تقل عن 8 أحرف.');if(password!==$('#confirmPassword').value)throw Error('كلمتا المرور غير متطابقتين.');if(!$('#terms').checked)throw Error('وافق على شروط الاستخدام وسياسة الخصوصية.');let result;if(phone){const phoneNumber=value('phone');if(!/^\+[1-9]\d{7,14}$/.test(phoneNumber))throw Error('اكتب رقم الهاتف بالصيغة الدولية مثل +2010XXXXXXXX.');sessionStorage.setItem('egyAuthSignupMeta',JSON.stringify({full_name,username}));result=await client.auth.signInWithOtp({phone:phoneNumber,options:{shouldCreateUser:true,data:{full_name,username}}});if(result.error)throw result.error;sessionStorage.setItem('egyAuthPhone',phoneNumber);go('verify-phone');}else{const email=value('email');result=await client.auth.signUp({email,password,options:{data:{full_name,username},emailRedirectTo:location.origin+location.pathname.replace(/\/auth-system\/.*$/,'/auth-system/verify-email.html')}});if(result.error)throw result.error;sessionStorage.setItem('egyAuthEmail',email);sessionStorage.setItem('egyAuthSignupMeta',JSON.stringify({full_name,username}));go('verify-email');}}catch(err){msg(err.message||'تعذر إنشاء الحساب.',true)}finally{busy(b,false,'إنشاء الحساب')}});
+ }
+ if(page==='verify-email'||page==='verify-phone'){
+  const phone=page==='verify-phone', target=phone?sessionStorage.getItem('egyAuthPhone'):sessionStorage.getItem('egyAuthEmail');$('#target').textContent=target||'بيانات التحقق';$('#verifyForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return msg('تعذر الاتصال بخدمة الحسابات.',true);const token=otpValue();if(!/^\d{6,8}$/.test(token))return msg('أدخل رمز التحقق كاملًا.',true);const b=$('#verifyBtn');busy(b,true,'جارٍ التأكيد…');try{const result=phone?await client.auth.verifyOtp({phone:target,token,type:'sms'}):await client.auth.verifyOtp({email:target,token,type:'signup'});if(result.error)throw result.error;if(!result.data.user)throw Error('لم يكتمل التحقق.');const meta=JSON.parse(sessionStorage.getItem('egyAuthSignupMeta')||'{}');const u=result.data.user;if(meta.username){const {error}=await client.from('profiles').upsert({id:u.id,username:meta.username,full_name:meta.full_name||'عضو EgyBook',bio:'',location:'',avatar_url:null,cover_url:null,updated_at:new Date().toISOString()},{onConflict:'id'});if(error)throw error;sessionStorage.removeItem('egyAuthSignupMeta');}if(meta.username){sessionStorage.setItem('egyAuthNewAccount','1');go('passkeys')}else{const ret=sessionStorage.getItem('egyAuthReturn')||getSafeReturn();sessionStorage.removeItem('egyAuthReturn');location.replace(ret)};}catch(err){msg(err.message||'تعذر تأكيد الرمز.',true)}finally{busy(b,false,'تأكيد التحقق')}});
+  $('#resend').addEventListener('click',async()=>{try{const r=phone?await client.auth.signInWithOtp({phone:target}):await client.auth.resend({type:'signup',email:target});if(r.error)throw r.error;msg('تم طلب إعادة إرسال رمز التحقق.')}catch(err){msg(err.message,true)}});
+ }
+ if(page==='forgot-password'){$('#forgotForm').addEventListener('submit',async e=>{e.preventDefault();try{const email=value('email');if(!email)throw Error('أدخل البريد الإلكتروني.');const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname.replace(/\/auth-system\/.*$/,'/auth-system/reset-password.html')});if(error)throw error;msg('إذا كان البريد مسجلًا، فسيصلك رابط استعادة كلمة المرور.')}catch(err){msg(err.message,true)}})}
+ if(page==='reset-password'){$('#resetForm').addEventListener('submit',async e=>{e.preventDefault();try{const p=$('#password').value;if(p.length<8)throw Error('استخدم 8 أحرف على الأقل.');if(p!==$('#confirmPassword').value)throw Error('كلمتا المرور غير متطابقتين.');const {error}=await client.auth.updateUser({password:p});if(error)throw error;go('password-success')}catch(err){msg(err.message,true)}})}
+ if(page==='passkeys'){$('#skip').addEventListener('click',()=>go('registration-success'));$('#enable').addEventListener('click',()=>msg('تفعيل Passkeys الفعلي قيد استكمال خدمة التحقق الآمنة. يمكنك المتابعة دون تفعيلها.',true));}
+ if(page==='telegram-verify'){$('#openTelegram').addEventListener('click',()=>{location.href='https://t.me/EgyBookVerifyBot?start=link'});msg('سيتم تفعيل التحقق الفعلي عبر مشاركة جهة الاتصال في البوت بعد ربط خدمة Telegram الآمنة.');}
+})();
