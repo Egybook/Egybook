@@ -1,0 +1,18 @@
+/* EgyBook v2009 — isolated photo/music viewer controls and persistent rail. */
+#imageViewer .iv-fixed-rail{position:absolute;z-index:9;left:max(8px,env(safe-area-inset-left));bottom:calc(104px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:12px;width:66px;color:#fff;text-shadow:0 2px 6px #000;pointer-events:auto}
+#imageViewer .iv-fixed-rail button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:48px;min-height:44px;padding:2px;border:0;background:transparent;color:#fff;font:inherit}
+#imageViewer .iv-fixed-rail button span{font-size:27px;line-height:1.1;filter:drop-shadow(0 2px 5px #000)}
+#imageViewer .iv-fixed-rail button small{font-size:10px;font-weight:800;max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#imageViewer .iv-rail-music{display:flex;flex-direction:column;align-items:center;gap:3px;width:66px;padding-top:8px;border-top:1px solid #ffffff70;text-align:center}
+#imageViewer .iv-rail-music[hidden]{display:none!important}
+#imageViewer .iv-rail-music>span{display:grid;place-items:center;width:42px;height:42px;border:2px solid #00d9ff;border-radius:50%;background:#061a35;color:#00d9ff;font-size:24px}
+#imageViewer .iv-rail-music strong,#imageViewer .iv-rail-music small{max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px}
+#imageViewer.image-viewer-controls-hidden .iv-fixed-rail{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+#imageViewer.image-viewer-controls-hidden .iv-brandline{opacity:1!important;visibility:visible!important}
+#imageViewer .iv-fixed-rail button:active{transform:scale(.95)}
+@media(max-width:390px){#imageViewer .iv-fixed-rail{left:4px;gap:8px;width:58px}#imageViewer .iv-fixed-rail button span{font-size:24px}#imageViewer .iv-rail-music{width:58px}}
+
+#imageViewer .iv-brandline{position:absolute;z-index:12;top:calc(10px + env(safe-area-inset-top));right:14px;pointer-events:none;font-size:16px;font-weight:950;color:#fff;text-shadow:0 2px 12px #000,0 0 14px #087bffb0}
+#imageViewer .iv-brandline span{color:#00d9ff}
+#imageViewer.image-viewer-controls-hidden .iv-brandline{opacity:1!important;visibility:visible!important}
+#imageViewer .iv-topbar{padding-top:30px}
