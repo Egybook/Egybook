@@ -1,0 +1,9 @@
+/* EgyBook Stage 5.2 — visual layer for vertical finger-tracked navigation. */
+#egybookVideoPlayer,#egybookVideoPoster{z-index:1;will-change:transform;}
+#egybookVideoBox.evp-swipe-dragging{user-select:none;-webkit-user-select:none;}
+#egybookVideoBox.evp-swipe-dragging #egybookVideoPlayer,
+#egybookVideoBox.evp-swipe-dragging #egybookVideoPoster{pointer-events:none;}
+.evp-swipe-preview{position:absolute;inset:0;z-index:2;overflow:hidden;background:#000;will-change:transform;pointer-events:none;}
+.evp-swipe-preview video,.evp-swipe-preview img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#000;}
+#egybookVideoBox .evp-brandline,#egybookVideoBox .evp-post-rail,#egybookVideoBox .evp-controls,#egybookVideoBox .evp-top-actions{z-index:10;}
+@media(prefers-reduced-motion:reduce){.evp-swipe-preview{transition:none!important;}}
