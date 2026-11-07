@@ -1,0 +1,6 @@
+/* EgyBook Stage 5 — isolated mobile feed snap styles. */
+@media (max-width:768px){
+ body.egybook-home-feed-snap{scroll-snap-type:y proximity;scroll-padding-top:calc(var(--egybook-topbar-height,64px) + env(safe-area-inset-top));}
+ body.egybook-home-feed-snap #postsList > .post.feed-snap-media{scroll-snap-align:start;scroll-snap-stop:normal;scroll-margin-top:calc(var(--egybook-topbar-height,64px) + env(safe-area-inset-top) + 8px);}
+}
+@media(prefers-reduced-motion:reduce){body.egybook-home-feed-snap{scroll-snap-type:none;}}
