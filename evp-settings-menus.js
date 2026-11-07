@@ -1,0 +1,32 @@
+/* EgyBook player settings sheets. UI-only quality/data preferences; never changes media source. */
+(function(){
+  'use strict';
+  if(window.__egybookEvpSettingsInstalled)return;
+  window.__egybookEvpSettingsInstalled=true;
+  const $=(s,r=document)=>r.querySelector(s);
+  const modal=$('#egybookVideoModal'),box=$('#egybookVideoBox');
+  if(!modal||!box)return;
+  const audioEls=()=>[$('#egybookVideoPlayer'),$('#egybookVideoAudio'),$('#egybookVideoSourceAudio')].filter(Boolean);
+  const getSound=()=>{const els=audioEls();return els.find(el=>el=== $('#egybookVideoSourceAudio') && !el.paused)||els.find(el=>el=== $('#egybookVideoAudio')&&!el.paused)||els[0]||null;};
+  const controls=document.createElement('div');controls.className='evp-audio-settings-controls evp-chrome';controls.innerHTML='<button type="button" class="evp-mini-control" data-evp-setting="mute" aria-label="كتم الصوت" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path d="M16 9a5 5 0 0 1 0 6M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg></button><button type="button" class="evp-mini-control" data-evp-setting="open" aria-label="إعدادات المشغل"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>';
+  const music=$('#evpMusicInfo');if(music)music.insertAdjacentElement('afterend',controls);else $('#evpPostRail')?.append(controls);
+  const backdrop=document.createElement('div');backdrop.className='evp-settings-backdrop';backdrop.hidden=true;backdrop.innerHTML='<section class="evp-settings-sheet" role="dialog" aria-modal="true" aria-label="إعدادات المشغل"><div class="evp-settings-grabber"></div><header><strong class="evp-settings-title">إعدادات المشغل</strong><button type="button" data-evp-setting="close" aria-label="إغلاق">×</button></header><div class="evp-settings-content"></div></section>';
+  document.body.append(backdrop);
+  const sheet=$('.evp-settings-sheet',backdrop),content=$('.evp-settings-content',backdrop),title=$('.evp-settings-title',backdrop);
+  let level=0,drag=null;
+  const close=()=>{backdrop.classList.remove('visible');sheet.style.transform='';setTimeout(()=>{if(!backdrop.classList.contains('visible'))backdrop.hidden=true;},220);level=0;};
+  const show=(n)=>{level=n;backdrop.hidden=false;requestAnimationFrame(()=>backdrop.classList.add('visible'));sheet.style.transform='';
+    if(n===1){title.textContent='إعدادات المشغل';content.innerHTML='<button class="evp-settings-row" data-evp-setting="quality-menu"><span>⚙️ إعدادات الجودة</span><b>‹</b></button>';}
+    if(n===2){title.textContent='إعدادات الجودة';const saved=localStorage.getItem('egybook-player-quality')||'auto';const saver=localStorage.getItem('egybook-data-saver')==='on';content.innerHTML=`<button class="evp-settings-row" data-evp-setting="quality-menu"><span>جودة الفيديو</span><b>${saved==='original'?'الأصلية':'تلقائي'}　‹</b></button><div class="evp-settings-row"><span><strong>توفير البيانات</strong><small>تفضيل محفوظ؛ لا يغيّر مصدر الفيديو الحالي</small></span><button type="button" class="evp-switch ${saver?'on':''}" role="switch" aria-checked="${saver}" data-evp-setting="data-saver"><i></i></button></div>`;}
+    if(n===3){title.textContent='اختيار الجودة';const saved=localStorage.getItem('egybook-player-quality')||'auto';content.innerHTML=`<button class="evp-settings-row ${saved==='auto'?'selected':''}" data-evp-setting="quality" data-value="auto"><span>تلقائي</span><b>${saved==='auto'?'✓':''}</b></button><button class="evp-settings-row ${saved==='original'?'selected':''}" data-evp-setting="quality" data-value="original"><span>الأصلية (مصدر الفيديو المتاح)</span><b>${saved==='original'?'✓':''}</b></button><p class="evp-settings-note">لا توجد نسخ متعددة للجودة ضمن مصدر هذا المشغل حاليًا.</p>`;}
+  };
+  controls.addEventListener('click',e=>{const b=e.target.closest('[data-evp-setting]');if(!b)return;if(b.dataset.evpSetting==='open')show(1);if(b.dataset.evpSetting==='mute'){const s=getSound();if(!s)return;s.muted=!s.muted;const muteButton=controls.querySelector('[data-evp-setting="mute"]');muteButton.innerHTML=s.muted?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path d="m17 9 5 6m0-6-5 6"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z"/><path d="M16 9a5 5 0 0 1 0 6M18.5 6.5a8.5 8.5 0 0 1 0 11"/></svg>';muteButton.setAttribute('aria-label',s.muted?'استعادة الصوت':'كتم الصوت');muteButton.setAttribute('aria-pressed',String(s.muted));}});
+  backdrop.addEventListener('click',e=>{if(e.target===backdrop){close();return;}const b=e.target.closest('[data-evp-setting]');if(!b)return;switch(b.dataset.evpSetting){case 'close':close();break;case 'quality-menu':show(3);break;case 'data-saver':{const on=localStorage.getItem('egybook-data-saver')!=='on';localStorage.setItem('egybook-data-saver',on?'on':'off');show(2);break;}case 'quality':localStorage.setItem('egybook-player-quality',b.dataset.value);show(2);break;}});
+  const start=e=>{if(!backdrop.classList.contains('visible')||e.target.closest('button'))return;drag={y:e.clientY,id:e.pointerId};try{sheet.setPointerCapture(e.pointerId);}catch(_){}};
+  const move=e=>{if(!drag||drag.id!==e.pointerId)return;const dy=Math.max(0,e.clientY-drag.y);sheet.style.transform=`translateY(${dy}px)`;};
+  const end=e=>{if(!drag||drag.id!==e.pointerId)return;const dy=e.clientY-drag.y;drag=null;if(dy>90)close();else sheet.style.transform='';};
+  sheet.addEventListener('pointerdown',start);sheet.addEventListener('pointermove',move);sheet.addEventListener('pointerup',end);sheet.addEventListener('pointercancel',end);
+  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!backdrop.hidden)close();});
+  window.addEventListener('popstate',()=>{if(!backdrop.hidden)close();},true);
+  document.addEventListener('click',e=>{const cm=$('#commentsModal');if(e.target===cm&&cm?.classList.contains('open')&&cm.classList.contains('evp-comments-overlay'))cm.querySelector('[data-action=\"comments-close\"]')?.click();},true);
+})();
