@@ -1,0 +1,8 @@
+/* Source-aware media fallback: never show Chromium's broken-image glyph. */
+:root{--egy-media-fallback:radial-gradient(ellipse at 50% 38%,rgba(0,170,255,.16),transparent 62%),linear-gradient(145deg,#10294b 0%,#07172e 58%,#101b3b 100%)}
+.post img.post-image,.post video.post-image,.profile-posts-list .post img.post-image,.profile-posts-list .post video.post-image,#profilePage .post img.post-image,#profilePage .post video.post-image{background:var(--egy-media-fallback)!important;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.post .post-media-single-wrap,.post .post-image-placeholder{background:var(--egy-media-fallback)!important}
+.post video.post-image:not(.egy-media-frame-ready),.profile-posts-list .post video.post-image:not(.egy-media-frame-ready),#profilePage .post video.post-image:not(.egy-media-frame-ready){background:var(--egy-media-fallback)!important}
+img.egy-media-frame-error{visibility:hidden!important}
+video.egy-media-frame-error{background:var(--egy-media-fallback)!important}
+.evp-swipe-preview img.egy-media-frame-error{visibility:hidden!important}
