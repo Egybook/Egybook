@@ -1,0 +1,151 @@
+/* EgyBook Responsive & Smooth UI Layer v160
+   Additive overrides only: preserves existing themes and component styling. */
+:root {
+  --egb-safe-top: env(safe-area-inset-top, 0px);
+  --egb-safe-right: env(safe-area-inset-right, 0px);
+  --egb-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --egb-safe-left: env(safe-area-inset-left, 0px);
+  --egb-page-gutter: clamp(8px, 2.2vw, 22px);
+}
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { min-width: 0; min-height: 100vh; min-height: 100dvh; overflow-x: clip; }
+button, input, textarea, select { font: inherit; }
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+img, video, canvas, svg { max-width: 100%; }
+img, video { height: auto; }
+.container, #profilePage, .section, .post, .modal-box, .profile-content { min-width: 0; }
+.container { width: min(100%, 780px); padding-inline: var(--egb-page-gutter); padding-bottom: calc(112px + var(--egb-safe-bottom)); }
+.topbar { padding-top: max(8px, var(--egb-safe-top)); padding-inline: max(var(--egb-page-gutter), var(--egb-safe-left)); }
+.bottom-navigation { padding-bottom: max(8px, var(--egb-safe-bottom)); }
+.post, .create-post, .section, .profile-content, .modal-box { overflow-wrap: anywhere; }
+.post img, .post video, .profile-cover img, .profile-cover video { max-width: 100%; }
+.top-navigation, .stories, .bottom-navigation { overscroll-behavior-inline: contain; }
+:where(button, a, input, textarea, select) { touch-action: manipulation; }
+@media (max-width: 359px) {
+  .container { padding-inline: 7px; }
+  .topbar { gap: 5px; padding-inline: 7px; }
+  .header-actions { gap: 3px; }
+  .topbar .icon-button { width: 34px; height: 34px; }
+  .bottom-navigation { gap: 0; padding-inline: 3px; }
+  .bottom-item { font-size: 9px; }
+  .bottom-item.create-button { flex-basis: 50px; width: 50px; }
+}
+@media (min-width: 600px) and (max-width: 1023px) {
+  .container { width: min(100% - 32px, 820px); }
+  #profilePage { width: min(100% - 32px, 900px); margin-inline: auto; }
+  .post, .create-post { border-radius: 20px; }
+}
+@media (min-width: 1024px) {
+  .container { width: min(100% - 48px, 860px); }
+  #profilePage { width: min(100% - 48px, 1040px); margin-inline: auto; }
+  .bottom-navigation { padding-bottom: 8px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .topbar { min-height: 54px; }
+  .bottom-navigation { min-height: 58px; }
+  .bottom-item { height: 48px; }
+  .bottom-item.create-button { height: 50px; margin-top: -8px; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .icon-button, .bottom-item, .top-nav-item { touch-action: manipulation; }
+}
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+html[data-egb-performance="conserve"] .decorative-motion,
+html[data-egb-performance="conserve"] .ambient-animation { animation: none !important; }
+
+/* Slightly tighter home feed cards without shrinking media itself */
+@media(max-width:600px){#home>.create-post{padding:12px}#home>.section{margin-block:12px}.post-header{padding:11px 11px 7px}.post-actions{padding-top:7px;padding-bottom:7px}.post-stats{padding-top:8px;padding-bottom:8px}}
+
+/* EgyBook Home Density Pass — compact header, navigation, stories and feed cards.
+   Scoped to the home screen on phones; preserves desktop and inner-page layouts. */
+@media (max-width: 600px) {
+  .topbar {
+    min-height: 62px !important;
+    padding: 7px 10px !important;
+    gap: 5px !important;
+  }
+  .topbar .menu-trigger { width: 36px; height: 36px; flex-basis: 36px; }
+  .topbar .logo { font-size: clamp(19px, 5vw, 25px) !important; }
+  .topbar .header-actions { gap: 4px !important; }
+  .topbar .header-actions .icon-button { width: 36px; height: 36px; min-width: 36px; }
+
+  #home.container { padding-top: 5px !important; }
+  #home > .top-navigation {
+    margin: 5px 0 8px !important;
+    padding: 4px !important;
+    gap: 2px !important;
+    border-radius: 19px !important;
+  }
+  #home .top-nav-item {
+    min-height: 59px !important;
+    min-width: 61px !important;
+    padding: 5px 3px !important;
+    gap: 3px !important;
+    border-radius: 15px !important;
+    font-size: 11px !important;
+  }
+  #home .top-nav-item .nav-icon { font-size: 19px; line-height: 1; }
+  #home .top-nav-item svg { width: 20px; height: 20px; }
+
+  #home > .create-post {
+    margin: 8px 0 10px !important;
+    padding: 11px !important;
+    border-radius: 20px !important;
+  }
+  #home .composer-row { gap: 9px; }
+  #home .composer-avatar { width: 43px; height: 43px; }
+  #home .composer-input { min-height: 46px; height: 46px; font-size: 13px; }
+  #home .composer-tools { margin-top: 9px; padding-top: 9px; gap: 6px; }
+  #home .composer-tool { min-height: 43px; padding: 6px 4px; font-size: 11px; gap: 4px; }
+  #home .composer-tool svg { width: 19px; height: 19px; }
+
+  #home > .section {
+    margin: 9px 0 !important;
+    padding: 10px !important;
+    border-radius: 20px !important;
+  }
+  #home .section-heading { margin-bottom: 7px !important; gap: 8px; }
+  #home .section-heading h2 { font-size: 19px !important; }
+  #home .section-link { font-size: 12px; padding: 4px 0; }
+
+  #home #storiesSection .stories {
+    gap: 8px !important;
+    padding: 2px 1px 4px !important;
+  }
+  #home #storiesSection .story {
+    flex: 0 0 78px !important;
+    width: 78px !important;
+    min-height: 0 !important;
+    padding: 5px 3px 6px !important;
+    gap: 5px !important;
+    border-radius: 15px !important;
+  }
+  #home #storiesSection .story-ring {
+    width: 64px !important;
+    height: 64px !important;
+    padding: 3px !important;
+  }
+  #home #storiesSection .story-name {
+    max-width: 72px;
+    margin-top: 0 !important;
+    font-size: 11px !important;
+  }
+
+  #home #momentsSection { margin-top: 9px !important; padding: 10px !important; }
+  #home #momentsSection .moment-tile { flex-basis: 78px; height: 106px; border-radius: 13px; }
+  #home #feedSection .feed-heading { margin-top: 0 !important; }
+  #home .post { margin: 9px 0 !important; border-radius: 19px !important; }
+  #home .post-header { padding: 9px 10px 6px !important; }
+  #home .post-content { padding: 0 11px 9px !important; }
+  #home .post-text { padding: 6px 11px 9px !important; font-size: 14px; }
+}
+
+@media (max-width: 380px) {
+  #home .top-nav-item { min-width: 56px !important; font-size: 10px !important; }
+  #home #storiesSection .story { flex-basis: 72px !important; width: 72px !important; }
+  #home #storiesSection .story-ring { width: 59px !important; height: 59px !important; }
+  #home #momentsSection .moment-tile { flex-basis: 72px; height: 98px; }
+}
