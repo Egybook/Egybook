@@ -1,0 +1,19 @@
+/* EgyBook Moments — compact horizontal discovery rail */
+.moments-section{margin-block:12px;padding:13px 12px 12px;overflow:hidden;border:1px solid rgba(0,196,255,.2);border-radius:20px;background:linear-gradient(135deg,rgba(10,39,79,.82),rgba(19,17,57,.78))}
+.moments-section .section-heading{align-items:center;margin:0 0 10px}
+.moments-section .section-heading h2{font-size:17px;letter-spacing:.1px}
+.moments-section .section-heading small{display:block;margin-top:3px;color:#9bc9ed;font-size:11px}
+.moments-brand{color:#55dfff;text-shadow:0 0 12px rgba(0,190,255,.35)}
+.moments-strip{display:flex;gap:9px;overflow-x:auto;padding:2px 1px 7px;scroll-snap-type:x proximity;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.moments-strip::-webkit-scrollbar{display:none}
+.moment-tile{position:relative;flex:0 0 94px;height:128px;padding:0;overflow:hidden;border:1px solid rgba(73,205,255,.5);border-radius:15px;background:#081a35;scroll-snap-align:start;box-shadow:0 5px 16px rgba(0,0,0,.25)}
+.moment-tile img{width:100%;height:100%;display:block;object-fit:cover}
+.moment-tile:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.82));pointer-events:none}
+.moment-tile .moment-owner{position:absolute;z-index:1;inset:auto 6px 7px;color:#fff;font-size:10px;font-weight:700;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.moment-tile .moment-note{position:absolute;z-index:2;top:6px;left:6px;width:23px;height:23px;display:grid;place-items:center;border-radius:50%;background:rgba(0,20,48,.78);color:#62e7ff;font-size:14px}
+.moments-loading{padding:16px 8px;color:#9ab7d7;font-size:12px;white-space:nowrap}
+@media(max-width:390px){.moments-section{padding:11px 9px}.moment-tile{flex-basis:84px;height:116px}.moments-section .section-heading h2{font-size:16px}}
+
+/* Home density overrides scoped to Moments module. */
+@media(max-width:600px){#home #momentsSection{margin-top:9px!important;padding:10px!important}#home #momentsSection .moment-tile{flex-basis:78px;height:106px;border-radius:13px}}
+@media(max-width:380px){#home #momentsSection .moment-tile{flex-basis:72px;height:98px}}
