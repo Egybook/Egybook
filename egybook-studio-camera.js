@@ -5,7 +5,7 @@
   let stream = null, recorder = null, chunks = [], timer = 0, countdownTimer = 0;
   let startedAt = 0, elapsedBeforePause = 0, facing = 'user', drawFrame = 0;
   let canvasStream = null, recordingStream = null, mixHandle = null;
-  let selectedFilter = 'none', beauty = { smooth: 0, light: 0, warmth: 0 }, photoMode = false, currentMode = 'video', recordLimit = 15, pendingClipSpeed = 1, limitStopQueued = false, micEnabled = true, starting = false, cameraRequestId = 0;
+  let selectedFilter = 'none', beauty = { smooth: 0, light: 0, warmth: 0 }, photoMode = false, currentMode = 'reel', recordLimit = 15, captureFrameRate = 30, limitStopQueued = false, micEnabled = true, starting = false, cameraRequestId = 0;
   const $ = selector => document.querySelector(selector);
   const preview = () => $('#studioCameraPreview');
   const stage = () => $('#studioCameraStage');
@@ -47,6 +47,7 @@
     button.classList.toggle('is-active', micEnabled);
     button.setAttribute('aria-pressed', String(micEnabled));
     button.setAttribute('aria-label', micEnabled ? 'كتم الميكروفون' : 'تشغيل الميكروفون');
+    const label = button.querySelector('span'); if (label) label.textContent = micEnabled ? 'الميكروفون يعمل' : 'الميكروفون مكتوم';
   }
   function updateSoundChip() {
     const hasSound = window.EgyBookCameraAudio?.hasSound?.();
@@ -72,7 +73,7 @@
     const height = Number(quality) || 1080;
     const constraints = {
       audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-      video: { facingMode: { ideal: facing }, width: { ideal: height === 2160 ? 3840 : height === 720 ? 1280 : 1920 }, height: { ideal: height }, frameRate: { ideal: 30, max: 60 } }
+      video: { facingMode: { ideal: facing }, width: { ideal: height === 2160 ? 3840 : height === 720 ? 1280 : 1920 }, height: { ideal: height }, frameRate: { ideal: captureFrameRate } }
     };
     try {
       starting = true;
@@ -276,10 +277,34 @@
     };
     countdownTimer = window.setTimeout(tick, 1000);
   }
+  document.addEventListener('click', event => {
+    if (event.target.closest('[data-camera-gallery]')) { $('#studioCameraGalleryInput')?.click(); return; }
+    if (event.target.closest('[data-camera-quick-video]')) { setMode('video'); return; }
+    if (event.target.closest('[data-camera-live-mode]')) {
+      const liveEntry = document.querySelector('[data-action="composer-live"]');
+      if (liveEntry) liveEntry.click();
+      else status('البث المباشر يحتاج إلى خدمة بث متصلة، وهي غير مفعلة حاليًا.', 'warn');
+    }
+  });
+  document.addEventListener('change', event => {
+    if (event.target.id !== 'studioCameraGalleryInput') return;
+    const file = event.target.files?.[0]; event.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) { status('اختار صورة أو فيديو من المعرض.', 'warn'); return; }
+    window.EgyBookCameraCapture = { file, type: file.type.startsWith('image/') ? 'image' : 'video', createdAt: Date.now(), mode: 'gallery' };
+    document.dispatchEvent(new CustomEvent('egybook:camera-capture-ready', { detail: window.EgyBookCameraCapture }));
+    status('تم اختيار الملف من المعرض وأصبح جاهزًا للاستخدام.');
+  });
   document.addEventListener('input', event => {
     if (['studioBeautySmooth', 'studioBeautyLight', 'studioBeautyWarmth'].includes(event.target.id)) updateFilter();
     if (event.target.id === 'studioCameraMusicVolume') window.EgyBookCameraAudio?.setVolume?.(event.target.value);
-    if (event.target.id === 'studioCameraSpeed') pendingClipSpeed = Math.max(0.5, Math.min(2, Number(event.target.value) || 1));
+    if (event.target.id === 'studioCameraSpeed') {
+      captureFrameRate = Math.max(15, Math.min(60, Number(event.target.value) || 30));
+      const badge = $('[data-studio-camera-action="speed"] small'); if (badge) badge.textContent = String(captureFrameRate);
+      const track = stream?.getVideoTracks?.()[0];
+      if (track && !isRecording()) void track.applyConstraints({ frameRate: { ideal: captureFrameRate } }).catch(() => status('معدل الإطارات المختار غير مدعوم في هذه الكاميرا.', 'warn'));
+    }
+    if (event.target.id === 'studioCameraQuality' && isActive() && !isRecording()) { stopStream(); void startCamera(); }
   });
   document.addEventListener('egybook:studio-panel-changed', () => { updateSoundChip(); syncMicButton(); });
   document.addEventListener('click', async event => {
@@ -315,6 +340,7 @@
     if (action === 'timer') await runCountdown();
     if (action === 'timer-cancel') { clearTimeout(countdownTimer); countdownTimer = 0; const overlay = $('#studioCameraCountdownOverlay'); if (overlay) overlay.hidden = true; status('تم إلغاء مؤقت التصوير.'); }
   });
+  setMode('reel');
   window.EgyBookStudioCamera = {
     startCamera, isActive, isRecording, setMode, setDuration, getMode: () => currentMode,
     stop() {
