@@ -1,0 +1,9 @@
+/* Existing comment action sheet — consistent SVG icon language. */
+#commentActionsBackdrop .comment-sheet-option .sheet-icon{display:grid;place-items:center;flex:0 0 auto;}
+#commentActionsBackdrop .comment-sheet-option .sheet-icon svg{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+body:has(#commentsModal.evp-comments-overlay.open) #commentActionsBackdrop.evp-comment-actions-compact .comment-sheet-option .sheet-icon svg{width:18px;height:18px;stroke-width:1.9}
+#commentActionsBackdrop .comment-sheet-option.report .sheet-icon{color:#d8a7ff}
+#commentActionsBackdrop .comment-sheet-option.delete .sheet-icon{color:#ff9db3}
+#commentActionsBackdrop .comment-sheet-option.edit .sheet-icon{color:#78caff}
+#commentActionsBackdrop .comment-sheet-option.copy .sheet-icon{color:#9aeaff}
+#commentActionsBackdrop .comment-sheet-option.reply .sheet-icon{color:#73e6ff}
