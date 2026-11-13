@@ -1,0 +1,37 @@
+/* EgyBook unified custom dropdowns — replaces native browser select popups. */
+.egybook-native-select-source{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+  opacity:0!important;pointer-events:none!important;
+}
+.egybook-custom-select{position:relative;display:block;width:100%;min-width:0;margin:4px 0;direction:rtl;z-index:2}
+.egybook-custom-select.is-open{z-index:2147482000}
+.egybook-custom-select-trigger{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;
+  padding:9px 13px;border:1px solid rgba(20,151,226,.68);border-radius:13px;
+  background:linear-gradient(135deg,#0b2a4a,#09162e);color:#eefaff;
+  font:inherit;font-size:13px;font-weight:700;text-align:right;cursor:pointer;
+  box-shadow:inset 0 0 14px rgba(0,136,255,.08);transition:border-color .16s,box-shadow .16s,background .16s;
+}
+.egybook-custom-select-trigger:focus-visible{outline:2px solid #00d9ff;outline-offset:2px}
+.egybook-custom-select-trigger:disabled{opacity:.5;cursor:not-allowed}
+.egybook-custom-select-value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.egybook-custom-select-chevron{flex:0 0 auto;color:#00d9ff;font-size:21px;line-height:1}
+.egybook-custom-select-menu{
+  position:fixed;top:0;left:0;z-index:2147482001;display:grid;gap:4px;
+  max-height:min(42dvh,330px);overflow:auto;padding:7px;border:1px solid #168fd6;border-radius:14px;
+  background:linear-gradient(150deg,#071d38,#030b1c);box-shadow:0 16px 36px rgba(0,0,0,.72),0 0 20px rgba(0,164,255,.15);
+  overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#087bff #061326;
+}
+.egybook-custom-select-menu[hidden]{display:none!important}
+.egybook-custom-select-option{
+  display:block;width:100%;min-height:40px;padding:9px 11px;border:1px solid transparent;border-radius:10px;
+  background:rgba(10,39,69,.94);color:#d9efff;font:inherit;font-size:13px;text-align:right;cursor:pointer;
+}
+.egybook-custom-select-option:hover,.egybook-custom-select-option:focus-visible{outline:none;border-color:#087bff;background:#0d3762;color:#fff}
+.egybook-custom-select-option.is-selected{border-color:#00cfff;background:linear-gradient(100deg,#06477a,#171d50);color:#fff}
+.egybook-custom-select-option:disabled{opacity:.42;cursor:not-allowed}
+@media(max-width:520px){
+ .egybook-custom-select-trigger{min-height:43px;padding:9px 11px;font-size:12px}
+ .egybook-custom-select-option{min-height:42px;font-size:13px}
+}
