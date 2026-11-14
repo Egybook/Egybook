@@ -1,0 +1,14 @@
+/* Unified view-count badges; overlays never participate in media gestures. */
+.eb-view-preview-wrap{position:relative!important;display:block;max-width:100%;overflow:hidden;}
+.eb-view-preview-wrap>.post-image{display:block;width:100%;}
+.eb-media-views{position:absolute;z-index:5;display:inline-flex;align-items:center;gap:5px;min-height:27px;padding:4px 9px;border:1px solid rgba(120,205,255,.34);border-radius:999px;background:rgba(3,15,35,.76);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);color:#fff;font:600 12px/1.2 system-ui,sans-serif;direction:rtl;pointer-events:none;white-space:nowrap;box-shadow:0 3px 12px rgba(0,0,0,.22);}
+.eb-media-views svg{width:15px;height:15px;fill:none;stroke:#00d9ff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+.eb-media-views-preview{left:10px;bottom:10px;}
+.eb-media-views-player{left:max(14px,env(safe-area-inset-left));bottom:max(18px,env(safe-area-inset-bottom));}
+.eb-media-views-moment{left:7px;bottom:7px;min-height:23px;padding:3px 7px;font-size:10px;}
+#egybookVideoBox.eb-view-positioned{position:relative;}
+#egybookVideoBox>.eb-media-views-player{top:max(66px,calc(env(safe-area-inset-top) + 52px));bottom:auto;left:14px;}
+#imageViewer.eb-view-positioned>.eb-media-views-player{top:max(72px,calc(env(safe-area-inset-top) + 58px));bottom:auto;right:14px;left:auto;}
+#momentsStrip [data-moment-post],#reelsStage .reel-feed-card{position:relative;}
+@media(max-width:600px){.eb-media-views{min-height:25px;padding:3px 8px;font-size:11px}.eb-media-views-preview{left:8px;bottom:8px}}
+@media(prefers-reduced-motion:reduce){.eb-media-views{backdrop-filter:none;-webkit-backdrop-filter:none}}
