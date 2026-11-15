@@ -1,0 +1,20 @@
+/* Settings details for the functional data-saving controls. */
+.egy-data-saver-note {
+  margin: 8px 4px 2px;
+  padding: 12px 14px;
+  border: 1px solid rgba(54, 159, 255, .2);
+  border-radius: 14px;
+  background: rgba(7, 27, 55, .55);
+  color: #a9bfdc;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.egy-settings-row[data-settings-action="settings-data-saver-toggle"] b,
+.egy-settings-row[data-settings-action="settings-data-autoplay-toggle"] b {
+  color: var(--cyan, #00d9ff);
+}
+@media (min-width: 1024px) {
+  #egySettingsPage { width: min(92vw, 1180px); margin-inline: auto; }
+  #egySettingsContent { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  #egySettingsContent .egy-settings-card { min-width: 0; }
+}
