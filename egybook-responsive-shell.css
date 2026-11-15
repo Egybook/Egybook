@@ -1,0 +1,294 @@
+/* EgyBook responsive shell v43.
+   Replaces the phone-width desktop column with real fluid laptop/desktop grids.
+   Tablet and phone layouts keep their existing rules and component behavior. */
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  main.container,
+  #home.container,
+  #profilePage.profile-page {
+    width: min(96vw, 1040px) !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+  }
+
+  #home.container {
+    display: block !important;
+    padding: 20px 14px 138px !important;
+  }
+
+  #home > .top-navigation,
+  #home > .create-post,
+  #home > .section,
+  #home > #feedSection {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #postsList,
+  #profilePage #profilePostsList,
+  #profilePage .profile-posts-list {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #profilePage .profile-content {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+  }
+}
+
+/* Compact desktop / laptop: one primary feed column plus a useful side rail. */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  :root { --eb-shell-gutter: clamp(20px, 2vw, 34px); }
+
+  .topbar {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box;
+    padding-inline: var(--eb-shell-gutter) !important;
+    justify-content: space-between;
+  }
+
+  #home.container {
+    display: grid !important;
+    width: min(98vw, 1500px) !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+    padding: 22px var(--eb-shell-gutter) 150px !important;
+    box-sizing: border-box;
+    grid-template-columns: minmax(220px, .78fr) minmax(540px, 2fr);
+    grid-template-areas:
+      "top top"
+      "compose compose"
+      "stories feed"
+      "moments feed";
+    gap: clamp(14px, 1.5vw, 22px);
+    align-items: start;
+  }
+
+  #home > .top-navigation { grid-area: top; min-width: 0; width: 100%; }
+  #home > .create-post { grid-area: compose; min-width: 0; width: 100%; margin: 0; }
+  #home > #storiesSection { grid-area: stories; min-width: 0; width: 100%; margin: 0; }
+  #home > #momentsSection { grid-area: moments; min-width: 0; width: 100%; margin: 0; }
+  #home > #feedSection { grid-area: feed; min-width: 0; width: 100%; margin: 0; }
+
+  #home > .section,
+  #home > #feedSection,
+  #home > .create-post { max-width: 100%; }
+
+  #postsList,
+  #home .post { width: 100%; max-width: 100%; min-width: 0; }
+
+  #storiesSection .stories {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    overflow: visible;
+    padding: 2px 0 4px;
+  }
+  #storiesSection .story {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    min-height: 70px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border-radius: 16px;
+  }
+  #storiesSection .story-ring { width: 50px; height: 50px; flex: 0 0 50px; }
+  #storiesSection .story-name { max-width: calc(100% - 62px); text-align: right; }
+
+  #momentsSection .moments-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    overflow: auto;
+    max-height: min(62vh, 560px);
+    overscroll-behavior: contain;
+    padding: 2px 1px 5px;
+  }
+  #momentsSection .moment-tile {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 3 / 4;
+  }
+
+  #profilePage.profile-page {
+    width: min(97vw, 1500px) !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+    padding-bottom: 150px !important;
+  }
+  #profilePage .profile-content {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding-inline: clamp(22px, 2.4vw, 36px);
+  }
+  #profilePage .profile-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  #profilePage .profile-shortcuts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  #profilePage #profilePostsList,
+  #profilePage .profile-posts-list { width: 100%; max-width: 1160px; margin-inline: auto; }
+}
+
+/* Wide desktop: centered feed, useful side rails and full-width navigation. */
+@media (min-width: 1280px) {
+  :root { --eb-shell-gutter: clamp(26px, 2.4vw, 48px); }
+
+  html, body { max-width: 100%; overflow-x: clip; }
+
+  .topbar {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: clamp(76px, 5.5vw, 92px);
+    box-sizing: border-box;
+    padding-inline: clamp(34px, 4vw, 82px) !important;
+    justify-content: space-between;
+  }
+
+  #home.container {
+    display: grid !important;
+    width: min(97vw, 1900px) !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+    padding: 24px var(--eb-shell-gutter) 160px !important;
+    box-sizing: border-box;
+    grid-template-columns: minmax(250px, .78fr) minmax(600px, 1.92fr) minmax(250px, .78fr);
+    grid-template-areas:
+      "top top top"
+      "stories compose moments"
+      "stories feed moments";
+    gap: clamp(18px, 1.55vw, 28px);
+    align-items: start;
+  }
+
+  #home > .top-navigation { grid-area: top; min-width: 0; width: 100%; }
+  #home > .create-post { grid-area: compose; min-width: 0; width: 100%; margin: 0; }
+  #home > #storiesSection { grid-area: stories; min-width: 0; width: 100%; margin: 0; }
+  #home > #momentsSection { grid-area: moments; min-width: 0; width: 100%; margin: 0; }
+  #home > #feedSection { grid-area: feed; min-width: 0; width: 100%; margin: 0; }
+
+  #home > .top-navigation {
+    gap: 10px;
+    padding: 13px 12px 16px;
+    overflow: visible;
+  }
+  #home > .top-navigation .top-nav-item {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: clamp(72px, 5.2vw, 88px);
+    font-size: clamp(13px, .92vw, 16px);
+  }
+  #home > .top-navigation .nav-icon { font-size: clamp(24px, 1.7vw, 31px); }
+
+  #home > .section,
+  #home > #feedSection,
+  #home > .create-post { max-width: 100%; }
+
+  #feedSection { align-self: start; }
+  #feedSection .feed-heading { margin-top: 0; }
+  #postsList { width: 100%; max-width: 100%; margin-inline: auto; }
+  #home .post { width: 100%; max-width: 100%; border-radius: 24px; margin-bottom: 22px; }
+  #home .post-header { padding: 20px clamp(20px, 1.6vw, 28px) 12px; }
+  #home .post-text { padding: 14px clamp(20px, 1.6vw, 28px) 18px; font-size: clamp(16px, .98vw, 19px); line-height: 1.9; }
+  #home .post-image { max-width: 100%; }
+
+  #storiesSection .stories {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: visible;
+    padding: 2px 0 4px;
+  }
+  #storiesSection .story {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    min-height: 76px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border-radius: 17px;
+  }
+  #storiesSection .story-ring { width: 56px; height: 56px; flex: 0 0 56px; }
+  #storiesSection .story-name { max-width: calc(100% - 70px); font-size: clamp(12px, .8vw, 14px); text-align: right; }
+  #storiesSection .section-heading h2,
+  #momentsSection .section-heading h2 { font-size: clamp(18px, 1.15vw, 22px); }
+
+  #momentsSection .moments-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    max-height: min(72vh, 760px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 2px 1px 5px;
+  }
+  #momentsSection .moment-tile {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    border-radius: 17px;
+  }
+  #momentsSection .moment-owner { font-size: clamp(9px, .72vw, 12px); }
+
+  #profilePage.profile-page {
+    width: min(97vw, 1800px) !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+    padding: 0 var(--eb-shell-gutter) 160px !important;
+    box-sizing: border-box;
+  }
+  #profilePage .profile-cover { height: clamp(300px, 23vw, 500px); border-radius: 30px 30px 42px 42px; }
+  #profilePage .profile-content {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding: clamp(64px, 5vw, 92px) clamp(28px, 3.3vw, 62px) 34px;
+  }
+  #profilePage .profile-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  #profilePage .profile-shortcuts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  #profilePage .profile-friends-panel,
+  #profilePage .profile-stories,
+  #profilePage .profile-create-post,
+  #profilePage .profile-posts-heading,
+  #profilePage .profile-posts-list,
+  #profilePage #profilePostsList { width: 100%; max-width: 100%; }
+  #profilePage #profilePostsList,
+  #profilePage .profile-posts-list { max-width: min(100%, 1280px); margin-inline: auto; }
+  #profilePage .profile-name-row h1,
+  #profilePage .profile-posts-heading h2 { font-size: clamp(25px, 1.65vw, 34px); }
+
+  #egySettingsPage { width: min(94vw, 1500px); max-width: none; margin-inline: auto; }
+  #egySettingsContent { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  #egySettingsContent .egy-settings-card { min-width: 0; }
+}
+
+@media (min-width: 1800px) {
+  #home.container { width: min(96vw, 1980px) !important; }
+  #home { gap: 30px; }
+  #home .post-text { font-size: 19px; }
+}
+
+/* Keep touch/keyboard focus and motion preferences intact at every breakpoint. */
+@media (hover: hover) and (pointer: fine) {
+  #home .post-action:hover,
+  #home .top-nav-item:hover,
+  #home .story:hover { transform: translateY(-1px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #home .post,
+  #home .story,
+  #home .top-nav-item { transition: none !important; }
+}
