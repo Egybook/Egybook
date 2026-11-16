@@ -1,0 +1,14 @@
+أوامر النشر (بعد مراجعة الملفات):
+
+supabase functions deploy egybook-hovod-authorize --no-verify-jwt
+
+ثم أضف Secrets في Supabase Edge Functions:
+EGYBOOK_PLAYBACK_AUTH_SECRET=<نفس السر الذي ستضعه في Cloudflare Worker>
+SUPABASE_SERVICE_ROLE_KEY=<مفتاح service_role الخاص بمشروع Supabase>
+
+وفي Cloudflare Worker Variables/Secrets:
+EGYBOOK_PLAYBACK_AUTH_URL=https://<PROJECT_REF>.supabase.co/functions/v1/egybook-hovod-authorize
+EGYBOOK_PLAYBACK_AUTH_SECRET=<نفس السر السابق>
+
+لا تضع SUPABASE_SERVICE_ROLE_KEY في Cloudflare Worker أو الواجهة أو GitHub.
+لا تشارك الأسرار في المحادثة أو الصور.
