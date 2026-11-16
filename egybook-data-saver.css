@@ -1,0 +1,11 @@
+/* Settings details for the functional data-saving controls. */
+
+.egy-settings-row[data-settings-action="settings-data-saver-toggle"] b,
+.egy-settings-row[data-settings-action="settings-data-autoplay-toggle"] b {
+  color: var(--cyan, #00d9ff);
+}
+@media (min-width: 1024px) {
+  #egySettingsPage { width: min(92vw, 1180px); margin-inline: auto; }
+  #egySettingsContent { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  #egySettingsContent .egy-settings-card { min-width: 0; }
+}
