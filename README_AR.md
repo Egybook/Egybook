@@ -1,36 +1,23 @@
-# خدمة تفويض تشغيل Hovod لـ EgyBook — الإصدار 1
+# EgyBook Hovod Authorization V1.4
 
-هذه الحزمة تضيف خدمة خلفية مستقلة لتفويض تشغيل الفيديو. لا تغيّر ملفات الواجهة ولا Worker المنشور ولا تنقل الفيديوهات القديمة.
+## مسار الملف
+`supabase/functions/egybook-hovod-authorize/index.ts`
 
-## الملفات
-- `supabase/migrations/202611170001_egybook_hovod_playback_assets.sql`: جدول ربط خاص بالخادم بين `playback_id` والمنشور، مع حالة المعالجة.
-- `supabase/functions/egybook-hovod-authorize/index.ts`: Supabase Edge Function تتحقق من الربط وحالة `ready` وجمهور المنشور.
+## التغيير في هذه الحزمة
+- تحديث دالة التفويض لتتحقق من أن `audience_list_id` تخص نفس صاحب المنشور قبل فحص أعضاء القائمة.
+- الإبقاء على عقد الاتصال الحالي مع Cloudflare Worker: يستقبل `playbackId` و`userId` و`action`، ويرجع `allowed` و`postId`.
+- لا تنشئ الدالة Hovod ticket؛ الـWorker هو المسؤول عن إصدار التذكرة وتوقيعها بعد التحقق من جلسة المستخدم.
 
-## قواعد الجمهور التي تطبقها الخدمة
-مطابقة لقواعد `EGYBOOK_POST_AUDIENCE_PRIVACY_V33.sql` الموجودة في نسخة V55:
-- `الجميع` / `public` / `everyone` / `publico`: عام.
-- `أنا فقط`: المالك فقط.
-- `أشخاص محددون`: `audience_user_ids`.
-- `قائمة مخصصة`: `custom_audience_list_members`.
-- `الأصدقاء المقربون`: `close_friends`.
-- `الأصدقاء`: علاقة `friend_requests` بحالة `accepted` في أي اتجاه.
-- `عام` و`استثناء`: صديق مقبول أو متابع للمالك، مع تطبيق `excluded_user_ids` في حالة استثناء.
-- أي قيمة غير معروفة تُرفض افتراضيًا.
+## توضيح أمني مهم
+في مسار إصدار التذكرة، Worker يتحقق من Bearer token عبر Supabase Auth (`/auth/v1/user`) ويستخرج `user.id` بنفسه، ولا يعتمد على userId يرسله المتصفح مباشرة. ثم يستدعي هذه الدالة من الخادم إلى الخادم باستخدام `EGYBOOK_PLAYBACK_AUTH_SECRET`.
+في مسار التجديد، Worker يتحقق من توقيع التذكرة الحالية ويطابق هوية المستخدم داخلها قبل إعادة فحص صلاحية المنشور.
+لذلك لا ينبغي استدعاء هذه الدالة مباشرة من المتصفح أو كشف السر فيه.
 
-## التثبيت بعد مراجعة المستخدم
-1. تأكد أن migrations التالية مطبقة في Supabase: `EGYBOOK_FRIEND_REQUESTS_MIGRATION.sql` و`EGYBOOK_PROFILE_RELATIONSHIPS_MIGRATION.sql` و`EGYBOOK_POST_AUDIENCE_PRIVACY_V33.sql`؛ لأنها تنشئ جداول وعلاقات وقواعد الجمهور التي تعتمد عليها الخدمة.
-2. شغّل ملف SQL الجديد في Supabase SQL Editor.
-3. انشر Edge Function باسم `egybook-hovod-authorize` مع تعطيل تحقق JWT على مستوى بوابة Edge Function (`--no-verify-jwt`)؛ الدالة نفسها تتحقق من سر داخلي قوي ثابت الزمن قبل أي استعلام.
-4. أضف Secret للخدمة باسم `EGYBOOK_PLAYBACK_AUTH_SECRET` (32 حرفًا عشوائيًا على الأقل).
-5. في Cloudflare Worker اضبط `EGYBOOK_PLAYBACK_AUTH_URL` على رابط الدالة، و`EGYBOOK_PLAYBACK_AUTH_SECRET` بنفس القيمة.
-6. أضف `SUPABASE_SERVICE_ROLE_KEY` إلى Secrets الخاصة بـSupabase Edge Function فقط؛ لا تضعه في Worker أو الواجهة.
+## متطلبات التشغيل
+- يجب أن تكون Migration الخاصة بجدول `hovod_playback_assets` قد نُفذت.
+- يجب أن تتوفر أسرار Edge Function: `EGYBOOK_PLAYBACK_AUTH_SECRET` و`SUPABASE_URL` و`SUPABASE_SERVICE_ROLE_KEY`.
+- يجب أن تتطابق قيمة `EGYBOOK_PLAYBACK_AUTH_SECRET` في Supabase مع القيمة الموجودة كـSecret في Worker.
+- لم يتم نشر هذه الحزمة إلى Supabase ولم يتم اختبار اتصال الإنتاج بها.
 
-## مهم قبل الاختبار الحقيقي
-- جدول الربط فارغ حتى يقوم مسار رفع Hovod الموثوق بإضافة سجل بعد نجاح المعالجة.
-- لا تملأ الجدول يدويًا بمعرّفات تجريبية ولا تجعل الواجهة تكتب فيه.
-- يلزم أن يكتب مسار رفع Hovod: `playback_id`, `post_id`, `owner_id`, ثم يغيّر `processing_status` إلى `ready` بعد اكتمال HLS والتحقق من الملفات.
-- هذه المرحلة لا تنشئ أصل Hovod ولا ترفع الفيديو إلى Hovod. لذلك لن تصدر تذاكر صالحة قبل اكتمال مسار الرفع.
-- لم تُنفذ أي عملية نشر أو تعديل في مشروع Supabase/Cloudflare الحي.
-
-## توافق ومخاطر
-المنطق مستند إلى SQL migrations المرفقة في V55. يجب التأكد أن هذه migrations مطبقة فعلًا في مشروع Supabase الحي، وأن جدول `user_follows` بأعمدته `follower_id` و`following_id` موجود كما هو مستخدم في migration. إذا اختلف المخطط، فالخدمة تفشل مغلقة ولا تمنح الوصول.
+## Commit المقترح
+`Validate Hovod custom audience ownership`
