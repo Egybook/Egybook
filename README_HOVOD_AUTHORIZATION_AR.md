@@ -1,51 +1,44 @@
-# EgyBook + Hovod Authorization — Ticket Contract Fix
+# EgyBook + Hovod Authorization v1.5
 
-## ما الذي يصلحه هذا التحديث؟
-- إصدار تذكرة HMAC-SHA256 متوافقة مع عقد Hovod V1.3.1.
-- التذكرة تحمل `aud=hovod-playback` و`iss=egybook` و`pid` و`sub` و`jti` و`iat` و`exp`.
-- مدة التذكرة 10 دقائق كحد أقصى.
-- في `refresh` يتم التحقق من التذكرة الحالية وتطابق المستخدم ومعرّف التذكرة، ثم إعادة فحص صلاحية المنشور قبل إصدار تذكرة جديدة بمعرّف `jti` جديد.
-- تُرفض الطلبات عند غياب الإعدادات أو فشل فحص الصلاحيات (fail closed).
-- لا يتم تعديل نظام الفيديو القديم أو جداول المنشورات أو سياسات RLS الحالية.
+## ما الذي تغير في v1.5؟
 
-## أسرار Supabase Edge Function المطلوبة
-اضبطها في إعدادات Edge Function على الخادم فقط:
-- `EGYBOOK_PLAYBACK_AUTH_SECRET`: سر عشوائي لا يقل عن 32 حرفًا، مشترك بين Hovod وخدمة التفويض.
-- `PLAYBACK_TOKEN_SECRET`: سر عشوائي لا يقل عن 32 حرفًا، ويجب أن يطابق القيمة الموجودة في Hovod.
+تم تحديث Edge Function `supabase/functions/egybook-hovod-authorize/index.ts` لتدعم مسارين:
 
-لا تضع أيًا منهما في HTML أو JavaScript أو GitHub Pages، ولا ترسلهما في المحادثة.
+1. **إصدار التذكرة الأولية:** يستقبل طلب POST يحمل Supabase access token في `Authorization: Bearer ...`، ويتحقق من المستخدم عبر `auth.getUser()`؛ لا يعتمد على `userId` يرسله المتصفح.
+2. **تجديد التذكرة من Hovod:** يستقبل الهيدر `x-hovod-refresh-secret` وجسم الطلب الذي يستخدمه Hovod (`playbackId`, `userId`, `currentTicket`, `currentTicketId`)، ويتحقق من التذكرة الحالية ثم يعيد فحص أهلية المشاهدة ويصدر تذكرة جديدة.
 
-## عقد الطلب
-`POST` مع ترويسة `x-egybook-playback-secret`.
+صيغة التذكرة متوافقة مع Hovod v1.3.1: `payload.signature` بتوقيع HMAC-SHA256، والحقول `aud`, `iss`, `pid`, `sub`, `jti`, `iat`, `exp`.
 
-إصدار أولي:
-```json
-{"action":"issue","playbackId":"...","userId":"..."}
-```
+## متغيرات Edge Function المطلوبة
 
-تجديد:
-```json
-{"action":"refresh","playbackId":"...","userId":"...","currentTicket":"...","currentTicketId":"..."}
-```
+- `SUPABASE_URL` — يوفّرها Supabase عادةً.
+- `SUPABASE_ANON_KEY` — يلزم لمسار التحقق من جلسة المستخدم.
+- `SUPABASE_SERVICE_ROLE_KEY` — يلزم لقراءة ربط الفيديو والمنشور والجمهور من جهة الخادم.
+- `PLAYBACK_TOKEN_SECRET` — سر HMAC بطول 32 حرفًا على الأقل؛ يجب أن يطابق `PLAYBACK_TOKEN_SECRET` في Hovod.
+- `EGYBOOK_PLAYBACK_AUTH_SECRET` — يستخدمه الكود كسر مشترك للتحقق من طلبات تجديد Hovod؛ يجب أن يطابق `EGYBOOK_PLAYBACK_REFRESH_SECRET` في Hovod. لا يُرسل هذا السر من المتصفح.
 
-الاستجابة في الحالتين:
-```json
-{"ticket":"<payload>.<signature>","expiresAt":1234567890,"refreshAfterSec":540}
-```
+## إعداد Hovod
 
-## ربط Hovod
-- `EGYBOOK_PLAYBACK_REFRESH_URL` يجب أن يشير إلى رابط هذه Edge Function.
-- `EGYBOOK_PLAYBACK_REFRESH_SECRET` في Hovod يجب أن يطابق `EGYBOOK_PLAYBACK_AUTH_SECRET` في Supabase.
-- `PLAYBACK_TOKEN_SECRET` في Hovod يجب أن يطابق `PLAYBACK_TOKEN_SECRET` في Supabase.
-- مسار Hovod refresh يرسل `userId` المستخرج من التذكرة الموقعة؛ لا يقبل هوية من المتصفح مباشرة.
-- مسار الإصدار الأولي يجب أن يستدعيه Worker موثوق بعد التحقق من جلسة Supabase للمستخدم. لا تستدعِ Edge Function من المتصفح مباشرة ولا تثق في `userId` مرسل من العميل.
+- `PLAYBACK_SECURITY_MODE=private`
+- `PLAYBACK_TOKEN_SECRET` = نفس قيمة Edge Function.
+- `EGYBOOK_PLAYBACK_REFRESH_URL` = رابط Edge Function: `/functions/v1/egybook-hovod-authorize`.
+- `EGYBOOK_PLAYBACK_REFRESH_SECRET` = نفس قيمة `EGYBOOK_PLAYBACK_AUTH_SECRET` في Supabase.
 
-## ما لم يُعتمد بعد
-هذه مراجعة/إصلاح لعقد التذكرة داخل Edge Function فقط. لا يعني ذلك أن التكامل أصبح جاهزًا للإنتاج. يلزم قبل النشر:
-1. تعديل/تأكيد Hovod Worker لمسار الإصدار الأولي بحيث يتحقق من JWT Supabase بنفسه ثم يمرر user ID الموثق.
-2. التحقق من جداول الحظر وتعطيل الحساب والإشراف، لأن مخططها لم يكن مثبتًا ضمن هذه الحزمة ولم نضف أسماء جداول مفترضة.
-3. اختبار صلاحيات الجمهور مع قيم قاعدة البيانات الفعلية، ثم اختبار HLS وSafari وتجديد التذكرة أثناء التشغيل.
-4. نشر migration الإضافية فقط بعد مراجعتها واعتمادها؛ لا تشغّلها تلقائيًا.
+## متطلبات الربط والقيود
 
-## حماية النظام الحالي
-هذا التحديث لا يغير `posts` أو تخزين Supabase/R2 القديم ولا ينقل أو يحذف أي وسائط. جدول الربط `hovod_playback_assets` إضافي ومعزول، ويظل غير متاح لـ anon/authenticated.
+- جدول `public.hovod_playback_assets` يجب أن يحتوي ربطًا موثوقًا بين `playback_id` و`post_id` و`owner_id` وحالة `processing_status='ready'`. الـ migration المرفقة additive وتضيف هذا الجدول فقط.
+- يجب أن ينشئ مسار الرفع/الإكمال الموثوق هذا الربط من جهة الخادم؛ لا تمنح المتصفح صلاحية الكتابة للجدول.
+- الكود يعتمد على الجداول والأعمدة التالية كما هي مكتوبة: `posts`, `custom_audience_lists`, `custom_audience_list_members`, `close_friends`, `friend_requests`, `user_follows`. يجب مطابقة هذه الأسماء وقيم `visibility` مع مخطط الإنتاج قبل الاعتماد النهائي.
+- هذا التحديث لا يفعّل دعم الزائر غير المسجل لإصدار التذكرة الأولية.
+- لا تنشر إعدادات Hovod ولا تربطه بالموقع قبل ضبط الأسرار المتطابقة واختبار الإصدار والتجديد فعليًا.
+
+## الأمان والنشر
+
+- لا تضع `SERVICE_ROLE_KEY` أو أي سر في ملفات الواجهة أو المستودع العام.
+- لا تشارك قيم الأسرار في المحادثة أو الصور.
+- `Verify JWT` في إعدادات Supabase يمكن أن يظل معطلاً لأن الدالة تتحقق من JWT بنفسها عبر `auth.getUser()`؛ طلبات التجديد تتحقق من السر المشترك وتوقيع التذكرة.
+- التحديث لا يحذف أو يعدّل ملفات الفيديو القديمة أو جداول المنشورات. لا تشغّل migration مرة أخرى إذا كانت قد طُبقت بالفعل؛ تحقق من وجود الجدول أولًا.
+
+## حالة الاختبار
+
+تم دمج ملف الدالة ومراجعة توافق صيغة HMAC وحقول التذكرة ومسار التجديد مع كود Hovod v1.3.1. لم يتم تنفيذ اختبار حي على مشروع Supabase أو خادم Hovod من هذه الحزمة؛ لذلك لا تعتبر النسخة اعتمادًا إنتاجيًا قبل الاختبار على بيئة منفصلة.
