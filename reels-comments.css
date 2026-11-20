@@ -1,0 +1,33 @@
+/* Reels comments intentionally reuse the native EgyBook #commentsModal UI.
+   This file contains behavior-only rules; no second sheet or composer is defined here. */
+body.egybook-reels-active.reels-comments-open .bottom-navigation,
+html.reels-comments-open body.egybook-reels-active .bottom-navigation {
+  bottom: calc(-1 * (var(--egybook-bottom-nav-height, 88px) + env(safe-area-inset-bottom, 0px) + 24px)) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: bottom 280ms cubic-bezier(.22,.75,.25,1), opacity 180ms ease, visibility 180ms !important;
+}
+
+body.egybook-reels-active:not(.reels-comments-open) .bottom-navigation {
+  bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.comments-modal.reels-neon-comments .comments-list {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.comments-modal.reels-neon-comments .comment-compose {
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.egybook-reels-active.reels-comments-open .bottom-navigation { transition: none !important; }
+}
