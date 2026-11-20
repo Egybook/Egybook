@@ -1,0 +1,58 @@
+/* Reels comments intentionally reuse the native EgyBook #commentsModal UI.
+   This file contains behavior-only rules; no second sheet or composer is defined here. */
+body.egybook-reels-active.reels-comments-open .bottom-navigation,
+html.reels-comments-open body.egybook-reels-active .bottom-navigation {
+  /* Slide the bar down out of view without changing its normal bottom offset. */
+  transform: translate3d(0, calc(100% + env(safe-area-inset-bottom, 0px) + 12px), 0) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: transform 280ms cubic-bezier(.22,.75,.25,1), opacity 180ms ease, visibility 180ms !important;
+}
+
+.comments-modal.reels-neon-comments .comments-list {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.comments-modal.reels-neon-comments .comment-compose {
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.egybook-reels-active.reels-comments-open .bottom-navigation { transition: none !important; }
+}
+
+
+/* V4 — Reels dock returns to the viewport's true bottom edge.
+   Keep the original dock dimensions/skin; remove the artificial 22px gesture
+   spacer that visually lifted it and covered the views badge. */
+body.egybook-reels-active:not(.reels-comments-open) > .bottom-navigation {
+  bottom: 0 !important;
+  margin-bottom: 0 !important;
+  transform: none !important;
+  translate: 0 0 !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
+/* While native comments are open, move the same dock fully below the viewport.
+   Closing comments removes the state class and restores the exact bottom anchor. */
+body.egybook-reels-active.reels-comments-open > .bottom-navigation {
+  bottom: 0 !important;
+  transform: translate3d(0, calc(100% + env(safe-area-inset-bottom, 0px) + 12px), 0) !important;
+  translate: 0 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Neon-backed Reels comment attachments */
+.reels-neon-comments .reel-comment-attachment-image{display:block;max-width:min(240px,72vw);max-height:260px;object-fit:contain;border-radius:14px;margin:9px 0 4px}
+.reels-neon-comments .reel-comment-attachment-audio{display:block;width:min(280px,74vw);height:42px;margin:9px 0 4px}
+.reels-neon-comments #commentAttachmentPreview{display:flex;align-items:center;gap:10px;flex-basis:100%;padding:7px 12px;border-radius:12px;background:rgba(8,123,255,.12);color:inherit;font-size:13px}
+.reels-neon-comments #commentAttachmentPreview button{border:0;background:transparent;color:inherit;font-size:22px}
+.reels-neon-comments [data-comment-compose-action="mic"].is-recording{color:#ff4b67;animation:reelMicPulse 1s ease-in-out infinite}
+@keyframes reelMicPulse{50%{opacity:.45;transform:scale(1.08)}}
