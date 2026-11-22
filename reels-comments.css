@@ -1,0 +1,83 @@
+/* Reels comments intentionally reuse the native EgyBook #commentsModal UI.
+   This file contains behavior-only rules; no second sheet or composer is defined here. */
+body.egybook-reels-active.reels-comments-open .bottom-navigation,
+html.reels-comments-open body.egybook-reels-active .bottom-navigation {
+  /* Slide the bar down out of view without changing its normal bottom offset. */
+  transform: translate3d(0, calc(100% + env(safe-area-inset-bottom, 0px) + 12px), 0) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: transform 280ms cubic-bezier(.22,.75,.25,1), opacity 180ms ease, visibility 180ms !important;
+}
+
+.comments-modal.reels-neon-comments .comments-list {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.comments-modal.reels-neon-comments .comment-compose {
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.egybook-reels-active.reels-comments-open .bottom-navigation { transition: none !important; }
+}
+
+
+/* V219: restore the original compact Reels-only comment action sheet.
+   This does not alter the Home comments menu. */
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions {
+  z-index: 23150 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 12px !important;
+  background: rgba(0,5,17,.42) !important;
+}
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-actions-sheet {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(86vw,340px) !important;
+  max-height: min(58dvh,470px) !important;
+  overflow-y: auto !important;
+  padding: 7px 11px calc(10px + env(safe-area-inset-bottom)) !important;
+  border: 1px solid rgba(22,139,255,.5) !important;
+  border-radius: 20px !important;
+  background: linear-gradient(160deg,#101c2a,#15191f 72%) !important;
+  box-shadow: 0 12px 34px #0009 !important;
+  overscroll-behavior: contain;
+}
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-actions-handle {
+  width: 42px; height: 4px; margin: 1px auto 8px; background: #8ea2b8; box-shadow: none;
+}
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-actions-reactions {
+  gap: 3px; padding: 6px 3px 8px; margin: 0 0 7px; border: 0; border-radius: 12px; background: #ffffff08; box-shadow: none;
+}
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-actions-reactions button {
+  width: 32px; height: 32px; flex: 0 1 34px; border: 0; background: transparent; font-size: 20px; animation: none !important;
+}
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option {
+  min-height: 42px; margin: 3px 0; padding: 6px 8px; gap: 10px; border: 0; border-radius: 10px; background: transparent;
+}
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option:active { background: rgba(255,255,255,.09); }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option.reply { order: 2; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option.copy { order: 3; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option.edit { order: 4; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option.delete { order: 5; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option.report { order: 6; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-cancel { order: 7; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option .sheet-icon {
+  width: 29px; height: 29px; border: 0; border-radius: 8px; background: rgba(255,255,255,.07); font-size: 18px; box-shadow: none;
+}
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option > span:nth-child(2) { gap: 0; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option strong { font-size: 14px; font-weight: 650; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option small,
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-option > b { display: none !important; }
+body.reels-comments-open #commentActionsBackdrop.evp-reels-comment-actions .comment-sheet-cancel {
+  min-height: 36px; margin-top: 5px; padding: 7px; border-radius: 10px; background: #ffffff08; border-color: #ffffff18; font-size: 13px;
+}
+body.reels-comments-open #commentEditBackdrop,
+body.reels-comments-open #commentDeleteBackdrop { z-index: 23160 !important; }
+body.reels-comments-open #commentReactionsModal { z-index: 23160 !important; }
