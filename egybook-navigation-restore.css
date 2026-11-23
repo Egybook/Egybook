@@ -1,0 +1,10 @@
+/* EgyBook V230.2 — Keep Home/Profile out of the paint tree until their
+   saved document scroll offset has been applied. Visibility preserves layout
+   height so the navigation module can wait for delayed feed/profile hydration. */
+#home[data-egybook-scroll-restore-pending],
+#profilePage[data-egybook-scroll-restore-pending],
+#home[data-egybook-scroll-restore-pending] *,
+#profilePage[data-egybook-scroll-restore-pending] * {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
