@@ -1,0 +1,6 @@
+/* V233: branded, non-black fallback while the canonical player decodes its first frame. */
+#egybookVideoPoster.evp-video-opening-placeholder{
+  object-fit:cover!important;
+  object-position:center center!important;
+  background:linear-gradient(145deg,#06172f 0%,#092e62 55%,#17144b 100%)!important;
+}
