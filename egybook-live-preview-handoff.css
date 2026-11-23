@@ -1,0 +1,32 @@
+/* V234 — display the original decoded feed video in the full-screen stage.
+   Transparent surfaces only: this module deliberately creates no poster or backdrop. */
+#egybookVideoBox .evp-live-preview-handoff{
+  position:absolute!important;
+  inset:0!important;
+  z-index:4!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  pointer-events:none!important;
+}
+#egybookVideoBox .evp-live-preview-handoff-video{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  transform:none!important;
+  pointer-events:none!important;
+}
+#egybookVideoBox.evp-video-tall-stage .evp-live-preview-handoff-video{
+  object-position:top center!important;
+}
+#egybookVideoBox.evp-video-natural-stage .evp-live-preview-handoff-video{
+  object-position:center center!important;
+}
