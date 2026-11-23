@@ -1,0 +1,11 @@
+/* EgyBook V236 — keep taps inside the visible bottom-navigation surface.
+   The legacy coarse-pointer rule made the whole nav pass pointer events through,
+   which allowed taps in its lower padding to activate content beneath it.
+   This module changes hit testing only: no layout, dimensions, position, visuals,
+   transitions, transforms, or header motion are modified. */
+@media (hover: none) and (pointer: coarse) {
+  body:not(.egybook-albums-open):not(.post-route-open):not(.messages-thread-open)
+  .bottom-navigation:not(.scroll-chrome-hidden):not(.nav-scroll-hidden) {
+    pointer-events: auto !important;
+  }
+}
