@@ -1,0 +1,59 @@
+/* EgyBook V235 — keep the existing Reels social rail visible and interactive.
+   This file is scoped to the unified player while it is displaying a Reels video. */
+body.egybook-reels-active #egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail,
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+  z-index: 22040 !important;
+}
+
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail > .evp-creator,
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail > .evp-reaction-wrap,
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail > [data-evp="post-comment"],
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail > [data-evp="post-share"],
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail > [data-evp="post-save"] {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex: 0 0 auto !important;
+  pointer-events: auto !important;
+}
+
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail > .evp-reaction-wrap {
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail #evpAuthorName {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  max-width: 78px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail .evp-avatar,
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail .evp-rail-action,
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail .evp-rail-action .evp-icon,
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail .evp-rail-action small {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+#egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail .evp-rail-action {
+  display: flex !important;
+  pointer-events: auto !important;
+}
+
+/* Keep the creator label readable in landscape too; do not change other players. */
+@media (orientation: landscape) {
+  #egybookVideoModal.evp-reels-context #egybookVideoBox.evp-reels-rail-ready #evpPostRail #evpAuthorName {
+    display: block !important;
+    max-width: 72px !important;
+    font-size: 9px !important;
+  }
+}
