@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>EgyBook V229.1 — اختبارات التنقل والوسائط</title>
+  <style>
+    :root{color-scheme:dark;font-family:Arial,Tahoma,sans-serif;background:#030918;color:#f5f8ff}
+    *{box-sizing:border-box}
+    body{margin:0;padding:18px 14px 90px;background:radial-gradient(circle at 50% 0%,#0d2b58,#030918 58%)}
+    header{position:sticky;top:0;z-index:2;padding:14px;border:1px solid #087bff66;border-radius:16px;background:#07152bf2;backdrop-filter:blur(12px)}
+    h1{font-size:19px;margin:0 0 7px}p{line-height:1.7;color:#a9bfdf;margin:5px 0}
+    .route{min-height:2600px;margin:14px auto;padding:16px;border:1px solid #087bff55;border-radius:18px;background:#07152b;max-width:620px}
+    .route[hidden]{display:none!important}
+    .post{margin-top:30px;padding:14px;border-radius:14px;background:#0c2040}
+    .egybook-feed-video-frame{height:210px;margin-top:12px;border-radius:12px;background:#10294c;overflow:hidden}
+    video{width:100%;height:100%;display:block}
+    nav{position:fixed;z-index:5;bottom:0;left:0;right:0;display:flex;gap:8px;justify-content:center;padding:10px;background:#07152bf2;border-top:1px solid #087bff66}
+    button{min-height:42px;padding:8px 13px;border:1px solid #087bff88;border-radius:12px;background:#0d2b58;color:#fff}
+    #results{max-width:620px;margin:12px auto;padding:14px;border:1px solid #00d9ff55;border-radius:15px;background:#061329}
+    .pass{color:#5cffbd}.fail{color:#ff7897}
+  </style>
+</head>
+<body data-egybook-active-page="home">
+  <header>
+    <h1>اختبار V229.1 — التنقل ومشاركة فيديوهات المنشورات</h1>
+    <p>صفحة اختبار مستقلة. لا ترفع أي منشورات ولا تتصل بقاعدة البيانات ولا تشغّل ملفات وسائط حقيقية.</p>
+  </header>
+
+  <main id="home" class="route" data-route-page>
+    <h2>الرئيسية التجريبية</h2>
+    <div id="postsList">
+      <article class="post" data-post-id="v2291-shared-post">
+        <strong>منشور تجريبي له نسخة في الملف الشخصي</strong>
+        <div class="egybook-feed-video-frame"><video class="post-image egybook-feed-video" data-feed-src="/tests/mock-media/shared-preview.mp4" muted playsinline></video></div>
+      </article>
+    </div>
+  </main>
+
+  <section id="profilePage" class="route" data-route-page hidden>
+    <h2>الملف الشخصي التجريبي</h2>
+    <div id="profilePostsList">
+      <article class="post" data-post-id="v2291-shared-post">
+        <strong>نفس المنشور داخل الملف الشخصي</strong>
+        <div class="egybook-feed-video-frame"><video class="post-image egybook-feed-video" data-feed-src="/tests/mock-media/shared-preview.mp4" muted playsinline></video></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="messagesPage" class="route" hidden><h2>الرسائل التجريبية</h2></section>
+  <section id="notificationsPage" class="route" hidden><h2>الإشعارات التجريبية</h2></section>
+
+  <div id="results" aria-live="polite"><p>جاري تشغيل الاختبارات…</p></div>
+
+  <nav aria-label="أزرار تنقل الاختبار">
+    <button id="goMessages" type="button" data-action="messages">الرسائل</button>
+    <button id="goHome" type="button" data-page="home">الرئيسية</button>
+    <button id="goProfile" type="button" data-action="profile">الملف الشخصي</button>
+  </nav>
+
+  <link rel="stylesheet" href="../egybook-navigation-restore.css?v=2302-seamless-route-restore">
+  <script src="../egybook-navigation-state.js?v=2302-seamless-route-restore" defer></script>
+  <script src="../egybook-shared-feed-media.js?v=2291-shared-source" defer></script>
+  <script>
+    window.addEventListener('load', () => {
+      const results = document.getElementById('results');
+      const lines = [];
+      const record = (name, passed, detail = '') => {
+        lines.push(`<p class="${passed ? 'pass' : 'fail'}">${passed ? 'PASS' : 'FAIL'} — ${name}${detail ? `: ${detail}` : ''}</p>`);
+        results.innerHTML = lines.join('');
+      };
+      const frame = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const setRoute = (page, username = null) => {
+        const roots = {home:'home',profile:'profilePage',messages:'messagesPage',notifications:'notificationsPage'};
+        if (username) history.replaceState({page, username}, '', location.href);
+        Object.values(roots).forEach(id => { document.getElementById(id).hidden = true; });
+        document.getElementById(roots[page]).hidden = false;
+        document.body.dataset.egybookActivePage = page;
+        document.dispatchEvent(new CustomEvent('egybook:primarypagechange', {detail:{page}}));
+      };
+      const tap = id => {
+        const target = document.getElementById(id);
+        target.dispatchEvent(new PointerEvent('pointerdown', {bubbles:true, pointerType:'touch'}));
+        target.dispatchEvent(new MouseEvent('click', {bubbles:true}));
+      };
+      (async () => {
+        try {
+          await frame();
+          window.scrollTo(0, 900);
+          tap('goMessages');
+          setRoute('messages');
+          window.scrollTo(0, 0);
+          tap('goHome');
+          setRoute('home');
+          await frame();
+          const homeRestored = Math.abs(window.scrollY - 900) <= 2;
+          record('استعادة موضع الرئيسية بعد الرسائل', homeRestored, `scrollY=${Math.round(window.scrollY)}`);
+
+          const allVideos = () => [...document.querySelectorAll('#postsList video, #profilePostsList video')];
+          const before = allVideos()[0] || null;
+          const oneVideo = allVideos().length === 1;
+          record('عدم وجود عنصرَي فيديو لنفس المنشور', oneVideo, `عدد العناصر=${allVideos().length}`);
+
+          history.replaceState({page:'profile', username:'v2291-test-user'}, '', location.href);
+          tap('goProfile');
+          setRoute('profile', 'v2291-test-user');
+          await frame();
+          const sameAfterProfile = before && document.querySelector('#profilePostsList video') === before;
+          record('نقل نفس عنصر الفيديو إلى الملف الشخصي', !!sameAfterProfile);
+
+          window.scrollTo(0, 680);
+          tap('goMessages');
+          setRoute('messages');
+          window.scrollTo(0, 0);
+          tap('goProfile');
+          setRoute('profile', 'v2291-test-user');
+          await frame();
+          const profileRestored = Math.abs(window.scrollY - 680) <= 2;
+          record('استعادة موضع الملف الشخصي بعد الرسائل', profileRestored, `scrollY=${Math.round(window.scrollY)}`);
+
+          const profile = document.getElementById('profilePostsList');
+          profile.innerHTML = '<article class="post" data-post-id="v2291-shared-post"><strong>بطاقة ملف شخصي أعيد إنشاؤها</strong><div class="egybook-feed-video-frame"><video class="post-image egybook-feed-video" data-feed-src="/tests/mock-media/shared-preview.mp4" muted playsinline></video></div></article>';
+          await new Promise(resolve => setTimeout(resolve, 120));
+          await frame();
+          const afterRender = allVideos();
+          const renderSafe = afterRender.length === 1 && afterRender[0] === before && document.querySelector('#profilePostsList video') === before;
+          record('الحفاظ على الفيديو عند إعادة إنشاء بطاقات الملف الشخصي', !!renderSafe, `عدد العناصر=${afterRender.length}`);
+
+          const passed = lines.every(line => line.includes('class="pass"'));
+          const summary = document.createElement('p');
+          summary.className = passed ? 'pass' : 'fail';
+          summary.style.fontWeight = '800';
+          summary.textContent = passed ? 'اكتملت الاختبارات: جميع النتائج ناجحة.' : 'هناك اختبار لم ينجح. أرسل صورة النتائج للمراجعة.';
+          results.append(summary);
+        } catch (error) {
+          record('تشغيل الاختبارات', false, String(error?.message || error));
+        }
+      })();
+    }, {once:true});
+  </script>
+</body>
+</html>

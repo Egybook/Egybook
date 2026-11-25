@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EgyBook V230.2 Navigation Restore Browser Check</title>
+  <link rel="stylesheet" href="../egybook-navigation-restore.css?v=2302-seamless-route-restore">
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#061329;color:#fff;font:16px/1.7 system-ui,sans-serif}
+    header{position:sticky;top:0;padding:10px 16px;background:#0b2144;z-index:2}
+    main,section{padding:18px;min-height:2100px}
+    #home{background:linear-gradient(#09244b,#061329)}
+    #profilePage{background:linear-gradient(#24104e,#061329)}
+    #messagesPage{min-height:100vh;background:#102a42}
+    .card{padding:20px;margin:24px 0;border:1px solid #2d83dc;border-radius:16px;background:#10284b}
+    #result{position:fixed;inset:auto 12px 12px;z-index:5;padding:12px;border-radius:12px;background:#111;color:#fff;white-space:pre-wrap}
+  </style>
+  <script>
+    sessionStorage.setItem('egybook_navigation_scroll_v229_1', JSON.stringify({version:1,routes:{home:{x:0,y:640,savedAt:Date.now()},'profile:nour':{x:0,y:720,savedAt:Date.now()}}}));
+  </script>
+  <script src="../egybook-navigation-state.js?v=2302-seamless-route-restore" defer></script>
+</head>
+<body data-egybook-active-page="messages">
+  <header>EgyBook — Browser regression harness</header>
+  <main id="home" data-route-page hidden>
+    <h1>Home feed — بداية الصفحة</h1>
+    <div class="card">منشور أعلى الصفحة (يجب ألا يظهر أثناء استعادة الموضع).</div>
+    <div style="height:800px"></div>
+    <div class="card">موضع Home المحفوظ</div>
+  </main>
+  <section id="profilePage" data-route-page hidden>
+    <h1>Profile — بداية الملف الشخصي</h1>
+    <div class="card">أعلى الملف الشخصي (يجب ألا يظهر أثناء الاستعادة).</div>
+    <div style="height:900px"></div>
+    <div class="card">موضع Profile المحفوظ</div>
+  </section>
+  <section id="messagesPage">Messages</section>
+  <pre id="result">Running browser checks…</pre>
+  <script>
+    const resultNode=document.getElementById('result');
+    const results=[];
+    const record=(name,pass,detail='')=>results.push(`${pass?'PASS':'FAIL'}: ${name}${detail?` — ${detail}`:''}`);
+    const frame=()=>new Promise(resolve=>requestAnimationFrame(()=>resolve()));
+    const restoreFrame=async()=>{await frame();await frame();};
+    const primaryChange=page=>{
+      document.body.dataset.egybookActivePage=page;
+      document.dispatchEvent(new CustomEvent('egybook:primarypagechange',{detail:{page}}));
+    };
+    window.addEventListener('load',async()=>{
+      try{
+        const home=document.getElementById('home');
+        const profile=document.getElementById('profilePage');
+        document.getElementById('messagesPage').hidden=true;
+        primaryChange('home'); // setPage announces the route before exposing .container.
+        home.hidden=false; // It becomes visible later in the same task, before deferred restore frames.
+        const homeHiddenBeforePaint=home.hasAttribute('data-egybook-scroll-restore-pending')&&getComputedStyle(home).visibility==='hidden';
+        record('Home is non-paintable before restoration',homeHiddenBeforePaint);
+        await restoreFrame();
+        record('Home scroll is restored before reveal',Math.abs(window.scrollY-640)<=1&&getComputedStyle(home).visibility!=='hidden',`scrollY=${Math.round(window.scrollY)}`);
+
+        home.hidden=true;
+        document.getElementById('messagesPage').hidden=false;
+        primaryChange('messages');
+        history.replaceState({page:'profile',username:'nour'},'',location.href);
+        profile.hidden=true;
+        primaryChange('profile'); // Mirrors routeToProfile(): event before reveal.
+        profile.hidden=false;
+        const profileHiddenBeforePaint=profile.hasAttribute('data-egybook-scroll-restore-pending')&&getComputedStyle(profile).visibility==='hidden';
+        record('Profile is non-paintable before restoration',profileHiddenBeforePaint);
+        await restoreFrame();
+        record('Profile scroll is restored before reveal',Math.abs(window.scrollY-720)<=1&&getComputedStyle(profile).visibility!=='hidden',`scrollY=${Math.round(window.scrollY)}`);
+      }catch(error){record('Browser harness execution',false,String(error&&error.message||error));}
+      const passed=results.every(line=>line.startsWith('PASS:'));
+      resultNode.textContent=results.join('\n')+`\n\n${passed?'ALL BROWSER CHECKS PASSED':'BROWSER CHECK FAILURE'}`;
+      resultNode.style.background=passed?'#063b2c':'#5b1515';
+      document.title=passed?'PASS — V230.2 Browser Check':'FAIL — V230.2 Browser Check';
+    },{once:true});
+  </script>
+</body>
+</html>
